@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="AlertOCampus" version="4">
+  <OBJECT>
+    <ID name="AlertOCampus" mc="Infrastructure.DiagramSet" uid="f4d2e866-76fe-40c6-aeae-17a64c0bc065"/>
+    <PID name="AlertOCampus" mc="Standard.Project" uid="10b42ec0-9162-4b9a-9bb9-1fb0c079bae7"/>
+    <ATTRIBUTES>
+      <ATT name="Name"><![CDATA[AlertOCampus]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="Descriptor">
+        <OBJECT>
+          <ID name="" mc="Infrastructure.Note" uid="eee4fd6e-ed90-4cba-b4e3-50c9e6c4c55e"/>
+          <ATTRIBUTES>
+            <ATT name="Content"><![CDATA[<Enter note text here>]]></ATT>
+            <ATT name="MimeType"><![CDATA[text/plain]]></ATT>
+            <ATT name="Name"></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <LINK relation="Model">
+              <FOREIGNID name="description" mc="Infrastructure.NoteType" uid="00000000-0000-3e81-0000-000000000000"/>
+            </LINK>
+          </DEPENDENCIES>
+        </OBJECT>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="alertocampus" version="4">
+  <OBJECT>
+    <ID name="alertocampus" mc="Standard.Package" uid="e6accd90-748c-4cc2-8103-48c19029aaca"/>
+    <PID name="AlertOCampus" mc="Standard.Project" uid="10b42ec0-9162-4b9a-9bb9-1fb0c079bae7"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[alertocampus]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="OwnedElement">
+        <COMPID name="Modele" mc="Standard.Class" uid="5f60c83f-66fc-4d26-9560-63a916d51321"/>
+        <COMPID name="Controleur" mc="Standard.Class" uid="037bfbbb-3057-450b-9f99-d30668d87793"/>
+        <COMPID name="Vue" mc="Standard.Class" uid="f4aa1396-ba36-48c9-8505-ff64d1c3934d"/>
+        <COMPID name="FilDiscussion" mc="Standard.Class" uid="013730cc-cbb3-463b-9a24-0f894f6637e6"/>
+        <COMPID name="Utilisateur" mc="Standard.Class" uid="843eaa8c-70a3-4c69-8d5f-a06aa81070f6"/>
+        <COMPID name="Groupe" mc="Standard.Class" uid="9aa4681f-45bc-400d-b55f-7aa0b16c967c"/>
+        <COMPID name="TypeGroupe" mc="Standard.Class" uid="662b5dc8-9617-4740-996b-1c5b1cb995f6"/>
+      </COMP>
+      <COMP relation="Product">
+        <COMPID name="alertocampus Class diagram" mc="Standard.ClassDiagram" uid="fcb83884-b0e6-48a4-9a5b-837ec851672d"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="server" version="4">
+  <OBJECT>
+    <ID name="server" mc="Standard.Package" uid="bfbebe28-3bce-4714-8438-aafca6716c34"/>
+    <PID name="AlertOCampus" mc="Standard.Project" uid="10b42ec0-9162-4b9a-9bb9-1fb0c079bae7"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[server]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="Product">
+        <COMPID name="Package Class diagram" mc="Standard.ClassDiagram" uid="7ee11d15-1839-4d1f-9aa5-ab706d94f4da"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>
