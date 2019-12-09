@@ -21,6 +21,7 @@
         <COMPID name="Utilisateur" mc="Standard.Class" uid="843eaa8c-70a3-4c69-8d5f-a06aa81070f6"/>
         <COMPID name="Groupe" mc="Standard.Class" uid="9aa4681f-45bc-400d-b55f-7aa0b16c967c"/>
         <COMPID name="TypeGroupe" mc="Standard.Class" uid="662b5dc8-9617-4740-996b-1c5b1cb995f6"/>
+        <COMPID name="Serveur" mc="Standard.Class" uid="fb384bff-eccb-49d9-9aaf-4bb0aa8bff4f"/>
       </COMP>
       <COMP relation="Product">
         <COMPID name="alertocampus Class diagram" mc="Standard.ClassDiagram" uid="fcb83884-b0e6-48a4-9a5b-837ec851672d"/>
