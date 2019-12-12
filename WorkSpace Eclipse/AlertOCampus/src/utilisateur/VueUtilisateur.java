@@ -10,20 +10,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 
-public class VueUtilisateur extends JFrame {
+public class VueUtilisateur extends JPanel {
 	Client client;
 	ControleurUtilisateur controleur;
 	
-	public VueUtilisateur(ControleurUtilisateur controleur) {
-		this.controleur = controleur;
-		
-		this.setTitle("AlertOCampus");
-		intialiserComposants();
-		
-		
-	}
-
-	private void intialiserComposants() {
+	public VueUtilisateur() {
+		this.controleur = new ControleurUtilisateur(this);
+	
 		// TODO Auto-generated method stub
 		JPanel container = new JPanel();
 		container.setLayout(new BorderLayout());
@@ -45,6 +38,9 @@ public class VueUtilisateur extends JFrame {
 		panelDiscussion.setLayout(new BorderLayout());
 		
 		JPanel panelSaisie = new JPanel();
+		this.setLayout(new BorderLayout());
+		this.add(westPanel, BorderLayout.WEST);
+		this.add(centerPanel, BorderLayout.CENTER);
 	}
 
 	

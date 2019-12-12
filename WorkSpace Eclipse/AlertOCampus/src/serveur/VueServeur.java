@@ -1,5 +1,7 @@
 package serveur;
 
-public class VueServeur {
+import javax.swing.JPanel;
+
+public class VueServeur extends JPanel {
 
 }
