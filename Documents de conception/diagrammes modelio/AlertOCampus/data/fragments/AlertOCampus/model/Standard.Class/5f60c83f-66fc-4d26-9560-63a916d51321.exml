@@ -45,7 +45,7 @@
           <DEPENDENCIES>
             <COMP relation="IO">
               <OBJECT>
-                <ID name="NomGroupe" mc="Standard.Parameter" uid="d3e499b0-5c7b-4b42-8e8f-28698e92a29c"/>
+                <ID name="groupe" mc="Standard.Parameter" uid="d3e499b0-5c7b-4b42-8e8f-28698e92a29c"/>
                 <ATTRIBUTES>
                   <ATT name="ParameterPassing">In</ATT>
                   <ATT name="MultiplicityMin"><![CDATA[1]]></ATT>
@@ -57,12 +57,12 @@
                   <ATT name="IsException">false</ATT>
                   <ATT name="IsStream">false</ATT>
                   <ATT name="Effect">ReadEffect</ATT>
-                  <ATT name="Name"><![CDATA[NomGroupe]]></ATT>
+                  <ATT name="Name"><![CDATA[groupe]]></ATT>
                   <ATT name="status">1970354901745664</ATT>
                 </ATTRIBUTES>
                 <DEPENDENCIES>
                   <LINK relation="Type">
-                    <FOREIGNID name="string" mc="Standard.DataType" uid="00000004-0000-000d-0000-000000000000"/>
+                    <ID name="Groupe" mc="Standard.Class" uid="9aa4681f-45bc-400d-b55f-7aa0b16c967c"/>
                   </LINK>
                 </DEPENDENCIES>
               </OBJECT>
@@ -86,7 +86,7 @@
           </DEPENDENCIES>
         </OBJECT>
         <OBJECT>
-          <ID name="AjouterFilDiscussion" mc="Standard.Operation" uid="8c3a252a-10bb-430c-9a1e-608345820128"/>
+          <ID name="ajouterFilDiscussion" mc="Standard.Operation" uid="8c3a252a-10bb-430c-9a1e-608345820128"/>
           <ATTRIBUTES>
             <ATT name="Concurrency">false</ATT>
             <ATT name="Final">false</ATT>
@@ -94,13 +94,13 @@
             <ATT name="Visibility">Public</ATT>
             <ATT name="IsClass">false</ATT>
             <ATT name="IsAbstract">false</ATT>
-            <ATT name="Name"><![CDATA[AjouterFilDiscussion]]></ATT>
+            <ATT name="Name"><![CDATA[ajouterFilDiscussion]]></ATT>
             <ATT name="status">1970354901745664</ATT>
           </ATTRIBUTES>
           <DEPENDENCIES>
             <COMP relation="IO">
               <OBJECT>
-                <ID name="nomGroupe" mc="Standard.Parameter" uid="40866e29-4136-4068-8366-697751c55978"/>
+                <ID name="groupe" mc="Standard.Parameter" uid="40866e29-4136-4068-8366-697751c55978"/>
                 <ATTRIBUTES>
                   <ATT name="ParameterPassing">In</ATT>
                   <ATT name="MultiplicityMin"><![CDATA[1]]></ATT>
@@ -112,17 +112,17 @@
                   <ATT name="IsException">false</ATT>
                   <ATT name="IsStream">false</ATT>
                   <ATT name="Effect">ReadEffect</ATT>
-                  <ATT name="Name"><![CDATA[nomGroupe]]></ATT>
+                  <ATT name="Name"><![CDATA[groupe]]></ATT>
                   <ATT name="status">1970354901745664</ATT>
                 </ATTRIBUTES>
                 <DEPENDENCIES>
                   <LINK relation="Type">
-                    <FOREIGNID name="string" mc="Standard.DataType" uid="00000004-0000-000d-0000-000000000000"/>
+                    <ID name="Groupe" mc="Standard.Class" uid="9aa4681f-45bc-400d-b55f-7aa0b16c967c"/>
                   </LINK>
                 </DEPENDENCIES>
               </OBJECT>
               <OBJECT>
-                <ID name="titreFil" mc="Standard.Parameter" uid="b20847ab-4174-468f-81f5-f9eb9198add2"/>
+                <ID name="titre" mc="Standard.Parameter" uid="b20847ab-4174-468f-81f5-f9eb9198add2"/>
                 <ATTRIBUTES>
                   <ATT name="ParameterPassing">In</ATT>
                   <ATT name="MultiplicityMin"><![CDATA[1]]></ATT>
@@ -134,7 +134,7 @@
                   <ATT name="IsException">false</ATT>
                   <ATT name="IsStream">false</ATT>
                   <ATT name="Effect">ReadEffect</ATT>
-                  <ATT name="Name"><![CDATA[titreFil]]></ATT>
+                  <ATT name="Name"><![CDATA[titre]]></ATT>
                   <ATT name="status">1970354901745664</ATT>
                 </ATTRIBUTES>
                 <DEPENDENCIES>
