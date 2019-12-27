@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="MF_AlertOCampus" version="4">
+  <OBJECT>
+    <ID name="MF_AlertOCampus" mc="Infrastructure.DiagramSet" uid="c601b61a-c826-496f-ba35-3618565cb97b"/>
+    <PID name="MF_AlertOCampus" mc="Standard.Project" uid="ca9c6a25-7534-47d5-be42-250c6b812ee9"/>
+    <ATTRIBUTES>
+      <ATT name="Name"><![CDATA[MF_AlertOCampus]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES></DEPENDENCIES>
+  </OBJECT>
+</EXT>

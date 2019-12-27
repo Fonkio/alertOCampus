@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="Serealizable" version="4">
+  <OBJECT>
+    <ID name="Serealizable" mc="Standard.Interface" uid="2341d984-0868-425c-8346-8c5de44c0303"/>
+    <PID name="mf_alertocampus" mc="Standard.Package" uid="7d4fae17-c73e-4f18-8d7e-51f95a118e78"/>
+    <ATTRIBUTES>
+      <ATT name="IsElementary">false</ATT>
+      <ATT name="IsAbstract">true</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[Serealizable]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES></DEPENDENCIES>
+  </OBJECT>
+</EXT>
