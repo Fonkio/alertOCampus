@@ -13,6 +13,11 @@
       <ATT name="status">1970354901745664</ATT>
     </ATTRIBUTES>
     <DEPENDENCIES>
+      <COMP relation="OwnedBehavior">
+        <COMPID name="Interaction" mc="Standard.Interaction" uid="d1227666-cbf9-47e8-89d1-4a2eea700383"/>
+        <COMPID name="Interaction1" mc="Standard.Interaction" uid="473e3a6b-c240-4304-ae99-ef60117c2a6a"/>
+        <COMPID name="Interaction2" mc="Standard.Interaction" uid="2d3d7295-926c-403f-824c-8053d73489d0"/>
+      </COMP>
       <COMP relation="OwnedElement">
         <COMPID name="ControleurAlertOCampus" mc="Standard.Class" uid="efc6aa1e-1c3d-45a6-b5bd-954efa96beed"/>
         <COMPID name="VueAlertOCampus" mc="Standard.Class" uid="5dc0b220-31a6-4852-8bae-b09bcce16ee9"/>

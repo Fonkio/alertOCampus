@@ -13,6 +13,9 @@
       <ATT name="status">1970354901745664</ATT>
     </ATTRIBUTES>
     <DEPENDENCIES>
+      <COMP relation="OwnedBehavior">
+        <COMPID name="Interaction" mc="Standard.Interaction" uid="b0169ae4-ad6d-4723-ae19-808b59ee795c"/>
+      </COMP>
       <COMP relation="OwnedElement">
         <COMPID name="ModeleServeur" mc="Standard.Class" uid="501602db-34da-46dd-bb53-19a22aa8d271"/>
         <COMPID name="VueServeur" mc="Standard.Class" uid="a08f510c-542f-4203-8896-bf7ae50018ca"/>
