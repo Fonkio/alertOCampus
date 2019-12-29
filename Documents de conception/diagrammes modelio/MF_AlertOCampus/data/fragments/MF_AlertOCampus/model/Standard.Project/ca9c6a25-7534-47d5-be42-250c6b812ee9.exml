@@ -10,7 +10,8 @@
     </ATTRIBUTES>
     <DEPENDENCIES>
       <COMP relation="Model">
-        <COMPID name="mf_alertocampus" mc="Standard.Package" uid="7d4fae17-c73e-4f18-8d7e-51f95a118e78"/>
+        <COMPID name="alertocampus" mc="Standard.Package" uid="7d4fae17-c73e-4f18-8d7e-51f95a118e78"/>
+        <COMPID name="server" mc="Standard.Package" uid="49781539-a937-432f-b953-adfd2edbb407"/>
       </COMP>
       <COMP relation="DiagramRoot">
         <COMPID name="MF_AlertOCampus" mc="Infrastructure.DiagramSet" uid="c601b61a-c826-496f-ba35-3618565cb97b"/>

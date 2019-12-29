@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="server" version="4">
+  <OBJECT>
+    <ID name="server" mc="Standard.Package" uid="49781539-a937-432f-b953-adfd2edbb407"/>
+    <PID name="MF_AlertOCampus" mc="Standard.Project" uid="ca9c6a25-7534-47d5-be42-250c6b812ee9"/>
+    <ATTRIBUTES>
+      <ATT name="IsInstantiable">false</ATT>
+      <ATT name="IsAbstract">false</ATT>
+      <ATT name="IsLeaf">false</ATT>
+      <ATT name="IsRoot">false</ATT>
+      <ATT name="Visibility">Public</ATT>
+      <ATT name="Name"><![CDATA[server]]></ATT>
+      <ATT name="status">1970354901745664</ATT>
+    </ATTRIBUTES>
+    <DEPENDENCIES>
+      <COMP relation="OwnedElement">
+        <COMPID name="ModeleServeur" mc="Standard.Class" uid="501602db-34da-46dd-bb53-19a22aa8d271"/>
+        <COMPID name="VueServeur" mc="Standard.Class" uid="a08f510c-542f-4203-8896-bf7ae50018ca"/>
+        <COMPID name="ControleurServeur" mc="Standard.Class" uid="bc7b7c93-6664-492d-a844-aaf4d94bd0fe"/>
+        <OBJECT>
+          <ID name="PaneState" mc="Standard.Enumeration" uid="8494d772-ea2a-4bd8-81f8-f137f1d9cef5"/>
+          <ATTRIBUTES>
+            <ATT name="IsElementary">true</ATT>
+            <ATT name="IsAbstract">false</ATT>
+            <ATT name="IsLeaf">false</ATT>
+            <ATT name="IsRoot">false</ATT>
+            <ATT name="Visibility">Public</ATT>
+            <ATT name="Name"><![CDATA[PaneState]]></ATT>
+            <ATT name="status">1970354901745664</ATT>
+          </ATTRIBUTES>
+          <DEPENDENCIES>
+            <COMP relation="Value">
+              <OBJECT>
+                <ID name="GESTION_GROUPE" mc="Standard.EnumerationLiteral" uid="b9ce8811-a712-468c-b62f-ca3476f52ba4"/>
+                <ATTRIBUTES>
+                  <ATT name="Name"><![CDATA[GESTION_GROUPE]]></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES></DEPENDENCIES>
+              </OBJECT>
+              <OBJECT>
+                <ID name="GESTION_UTILISATEUR" mc="Standard.EnumerationLiteral" uid="2d0fbe6b-6087-49d8-bc34-c0855c978214"/>
+                <ATTRIBUTES>
+                  <ATT name="Name"><![CDATA[GESTION_UTILISATEUR]]></ATT>
+                  <ATT name="status">1970354901745664</ATT>
+                </ATTRIBUTES>
+                <DEPENDENCIES></DEPENDENCIES>
+              </OBJECT>
+            </COMP>
+          </DEPENDENCIES>
+        </OBJECT>
+      </COMP>
+      <COMP relation="Product">
+        <COMPID name="Model Class diagram" mc="Standard.ClassDiagram" uid="302e534a-d2fa-4d13-b5db-ff7570150c2f"/>
+      </COMP>
+    </DEPENDENCIES>
+  </OBJECT>
+</EXT>

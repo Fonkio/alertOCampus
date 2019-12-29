@@ -2,7 +2,7 @@
 <!--GENERATED FILE, PLEASE DO NOT EDIT!!!--><EXT object="ModeleAlertOCampus" version="4">
   <OBJECT>
     <ID name="ModeleAlertOCampus" mc="Standard.Class" uid="bd1badac-2a49-40d7-aeaa-99f474c7b25c"/>
-    <PID name="mf_alertocampus" mc="Standard.Package" uid="7d4fae17-c73e-4f18-8d7e-51f95a118e78"/>
+    <PID name="alertocampus" mc="Standard.Package" uid="7d4fae17-c73e-4f18-8d7e-51f95a118e78"/>
     <ATTRIBUTES>
       <ATT name="IsActive">false</ATT>
       <ATT name="IsMain">false</ATT>
@@ -691,7 +691,7 @@
           </ATTRIBUTES>
           <DEPENDENCIES>
             <LINK relation="Target">
-              <ID name="ServeurCommunication" mc="Standard.Class" uid="04fc2c6e-e1c2-4b1a-8638-7e76b6a8e115"/>
+              <ID name="Serveur" mc="Standard.Class" uid="04fc2c6e-e1c2-4b1a-8638-7e76b6a8e115"/>
             </LINK>
             <COMP relation="Opposite">
               <OBJECT>
