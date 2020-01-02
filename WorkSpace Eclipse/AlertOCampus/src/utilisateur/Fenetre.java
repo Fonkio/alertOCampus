@@ -16,8 +16,9 @@ public class Fenetre extends JFrame{
 	    
 	    this.vueUtilisateur = new VueUtilisateur();
 	    this.add(this.vueUtilisateur);
-	   
-	    this.pack();
+	    this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+	    
+	    this.setSize(1500,990);
 	    this.setVisible(true);
 	}
 
