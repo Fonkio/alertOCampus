@@ -8,14 +8,14 @@ public class Fil {
 	private String titre;
 	private Set<Message> messages;
 	private Groupe destination;
-	private Utilisateur expediteur;
+	private Utilisateur createur;
 	
 	public Fil(int idFil, String titre, Groupe destination, Utilisateur expediteur) {
 		super();
 		this.idFil = idFil;
 		this.titre = titre;
 		this.destination = destination;
-		this.expediteur = expediteur;
+		this.createur = expediteur;
 	}
 
 	public int getIdFil() {
@@ -34,8 +34,8 @@ public class Fil {
 		return destination;
 	}
 
-	public Utilisateur getExpediteur() {
-		return expediteur;
+	public Utilisateur getCreateur() {
+		return createur;
 	}
 	
 	

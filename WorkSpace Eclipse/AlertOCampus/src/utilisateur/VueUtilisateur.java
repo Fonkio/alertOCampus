@@ -6,22 +6,31 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.processing.Messager;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.table.TableColumnModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class VueUtilisateur extends JPanel {
 	Client client;
@@ -32,6 +41,9 @@ public class VueUtilisateur extends JPanel {
 	private JLabel groupe = new JLabel("Groupe");
 	ModeleTableau modeleTableau = new ModeleTableau();
 	private JTable messages = new JTable(modeleTableau);
+	DefaultMutableTreeNode racine = new DefaultMutableTreeNode("Groupes");
+	ModeleTree modeleArbre = new ModeleTree();
+	JTree arbreTickets = new JTree(modeleArbre);
 	
 	public VueUtilisateur() {
 		
@@ -45,7 +57,7 @@ public class VueUtilisateur extends JPanel {
 			/* Composé de l'arbre des tickets et le bouton de création des fils de discussion */
 			JPanel westPanel = new JPanel();
 			westPanel.setLayout(new BorderLayout());
-				JTree arbreTickets = new JTree();
+				
 				JButton boutonCreationFil = new JButton(); //TODO factoriser Jtree et jbutton ?
 				boutonCreationFil.setText("Nouveau Fil");
 			westPanel.add(arbreTickets, BorderLayout.CENTER);
@@ -100,6 +112,7 @@ public class VueUtilisateur extends JPanel {
 				panelSaisie.setLayout(new BorderLayout());
 				JTextArea zoneTexte = new JTextArea(); 
 				zoneTexte.setRows(3);
+				zoneTexte.setBorder(BorderFactory.createLineBorder(Color.black));
 				zoneTexte.setEditable(true);
 				panelSaisie.add(zoneTexte, BorderLayout.CENTER);
 				JButton buttonEnvoyer = new JButton();
@@ -114,28 +127,13 @@ public class VueUtilisateur extends JPanel {
 		this.add(westPanel, BorderLayout.WEST);
 		this.add(centerPanel, BorderLayout.CENTER);
 		
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
-		nouveauMessage(new Message(1, "C'est mon message Test : BONNE ANNEE", new Date(2020, 1, 1), new Utilisateur(1, "FABRE", "Maxime")));
+		
+
+		
+		/*TEST */
+		
 	
+		
 	}
 	
 	public void setInfoFil(String titre, String date, String createur, String groupe) {
@@ -145,9 +143,29 @@ public class VueUtilisateur extends JPanel {
 		this.groupe.setText(groupe);
 	}
 	
-	public void nouveauMessage(Message m) {
-		modeleTableau.messages.add(m);
+	public void SetMessages(List<Message> m) {
+		modeleTableau.messages = new ArrayList<Message>(m);
 		modeleTableau.fireTableDataChanged();
+	}
+	
+	public void setArbre(List<Groupe> lg, List<Fil> lf) {
+		modeleArbre.groupes = lg;
+		modeleArbre.fils = lf;
+	}
+
+	public String utilisateur() {
+		JOptionPane jop = new JOptionPane();
+		return jop.showInputDialog(this, "Entrez votre login");
+	}
+
+	public String motDePasse() {
+		JPasswordField pf = new JPasswordField();
+		JOptionPane jop = new JOptionPane();
+		int ok = jop.showConfirmDialog(this, pf, "Entrez votre mot de passe", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if (ok == JOptionPane.OK_OPTION) {
+			  return pf.getPassword().toString();
+		}
+		return null;
 	}
 
 	
