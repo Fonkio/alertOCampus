@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,6 +29,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.table.TableColumnModel;
@@ -59,6 +62,7 @@ public class VueUtilisateur extends JPanel {
 			westPanel.setLayout(new BorderLayout());
 				
 				JButton boutonCreationFil = new JButton(); //TODO factoriser Jtree et jbutton ?
+				boutonCreationFil.addActionListener(controleur);
 				boutonCreationFil.setText("Nouveau Fil");
 			westPanel.add(arbreTickets, BorderLayout.CENTER);
 			westPanel.add(boutonCreationFil, BorderLayout.SOUTH);
@@ -116,6 +120,7 @@ public class VueUtilisateur extends JPanel {
 				zoneTexte.setEditable(true);
 				panelSaisie.add(zoneTexte, BorderLayout.CENTER);
 				JButton buttonEnvoyer = new JButton();
+				buttonEnvoyer.addActionListener(controleur);
 				buttonEnvoyer.setText("Envoyer");
 				panelSaisie.add(buttonEnvoyer, BorderLayout.EAST);
 			
@@ -153,17 +158,64 @@ public class VueUtilisateur extends JPanel {
 		modeleArbre.fils = lf;
 	}
 
-	public String utilisateur() {
+
+
+	public String[] auth() {
+		JLabel ll = new JLabel("Identifiant :");
+		JLabel pl = new JLabel("Mot de passe :");
+		JTextField lf = new JTextField();
+		JPasswordField pf = new JPasswordField();
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(ll);
+		panel.add(lf);
+		panel.add(pl);
+		panel.add(pf);
 		JOptionPane jop = new JOptionPane();
-		return jop.showInputDialog(this, "Entrez votre login");
+		int ok = jop.showConfirmDialog(this, panel, "Entrez votre mot de passe", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if (ok == JOptionPane.OK_OPTION) {
+			String[] st = new String[2];
+			st[0] = lf.getText().toString();
+			st[1] = pf.getPassword().toString();
+			return st;
+		}
+		return null;
 	}
 
-	public String motDePasse() {
-		JPasswordField pf = new JPasswordField();
+	public void erreurAuth() {
 		JOptionPane jop = new JOptionPane();
-		int ok = jop.showConfirmDialog(this, pf, "Entrez votre mot de passe", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		jop.showMessageDialog(this, "Identifiant/Mot de passe incorrect !", "Connexion", JOptionPane.ERROR_MESSAGE);;
+	}
+
+	public Fil nouveauFil(List<Groupe> lg) {
+		JLabel titreLabel = new JLabel("Titre :");
+		JLabel groupeLabel = new JLabel("Groupe :");
+		JLabel messageLabel = new JLabel("Message :");
+		
+		JTextField titreField = new JTextField();
+		
+		JComboBox<Groupe> groupeCombo = new JComboBox<>(); //TODO
+		JTextArea zoneTexte = new JTextArea(); 
+		zoneTexte.setRows(3);
+		zoneTexte.setBorder(BorderFactory.createLineBorder(Color.black));
+		zoneTexte.setEditable(true);
+		
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(titreLabel);
+		panel.add(titreField);
+		panel.add(groupeLabel);
+		panel.add(groupeCombo);
+		panel.add(messageLabel);
+		panel.add(zoneTexte);
+		JOptionPane jop = new JOptionPane();
+		int ok = jop.showConfirmDialog(this, panel, "Création de fil de discussion", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if (ok == JOptionPane.OK_OPTION) {
-			  return pf.getPassword().toString();
+			Groupe g = new Groupe(0, "test", new ArrayList<Utilisateur>());
+			Fil f =new Fil(0, titreField.getText(), g/*(Groupe)groupeCombo.getSelectedItem()*/, controleur.getModeleUtilisateur().getCurrentUser());
+			modeleArbre.groupes.add(g);
+			modeleArbre.fils.add(f);
+			return  f;
 		}
 		return null;
 	}

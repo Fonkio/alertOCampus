@@ -69,11 +69,11 @@ public class ModeleTree implements TreeModel {
 
 	@Override
 	public boolean isLeaf(Object node) {
-		for (Fil f : fils) {
+		/*for (Fil f : fils) {
 			if (f.getTitre().equals(((Fil)node).getTitre())) {
 				return true;
 			}
-		}
+		}*/
 		return false;
 	}
 
