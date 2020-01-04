@@ -24,6 +24,7 @@ public class ModeleTree implements TreeModel {
 	}
 	
 	public List<Fil> getFilListOfGroup(Groupe g) {
+		System.out.println("test1");
 		List<Fil> lf = new ArrayList<>();
 		for(Fil f : fils) {
 			if (f.getDestination().equals(g)) {
