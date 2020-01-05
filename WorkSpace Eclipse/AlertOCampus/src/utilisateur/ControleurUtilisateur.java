@@ -37,8 +37,7 @@ public class ControleurUtilisateur implements Serializable, ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (((JButton)e.getSource()).getText().equals("Nouveau Fil")) {
-			List<Groupe> lg = new ArrayList<>();
-			Fil newFil = vueUtilisateur.nouveauFil(lg);
+			vueUtilisateur.nouveauFil();
 		}
 		
 	}
@@ -64,6 +63,15 @@ public class ControleurUtilisateur implements Serializable, ActionListener{
 			tabGroupe[i] = lg.get(i);
 		}
 		return tabGroupe;
+	}
+
+	public void envoyerFil(Fil f) {
+		modeleUtilisateur.envoyerFil(f);
+	}
+
+	public void envoyerMessage(Message m, Fil f) {
+		modeleUtilisateur.envoyerMessage(m, f);
+		
 	}
 	
 

@@ -1,12 +1,19 @@
 package utilisateur;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 public class Fil {
+	
 	private int idFil;
+	public void setIdFil(int idFil) {
+		this.idFil = idFil;
+	}
+
 	private String titre;
-	private Set<Message> messages;
+	private List<Message> messages = new ArrayList<>();
 	private Groupe destination;
 	private Utilisateur createur;
 	
@@ -26,7 +33,7 @@ public class Fil {
 		return titre;
 	}
 
-	public Set<Message> getMessages() {
+	public List<Message> getMessages() {
 		return messages;
 	}
 

@@ -8,6 +8,10 @@ import java.util.Set;
 
 public class Message {
 	private int idMessage;
+	public void setIdMessage(int idMessage) {
+		this.idMessage = idMessage;
+	}
+
 	private String texte;
 	private Date dCreation;
 	private Utilisateur expediteur;
