@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -34,6 +35,7 @@ import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 public class VueUtilisateur extends JPanel {
 	Client client;
@@ -42,11 +44,13 @@ public class VueUtilisateur extends JPanel {
 	private JLabel dateFil = new JLabel("Date");
 	private JLabel createur = new JLabel("Créateur");
 	private JLabel groupe = new JLabel("Groupe");
-	ModeleTableau modeleTableau = new ModeleTableau();
+	private ModeleTableau modeleTableau = new ModeleTableau();
 	private JTable messages = new JTable(modeleTableau);
-	DefaultMutableTreeNode racine = new DefaultMutableTreeNode("Groupes");
-	ModeleTree modeleArbre = new ModeleTree();
-	JTree arbreTickets = new JTree(modeleArbre);
+	private DefaultMutableTreeNode racine = new DefaultMutableTreeNode("Groupes");
+	private JTree arbreTickets = new JTree(racine) ;
+	private List<Groupe> listeGroupes = new ArrayList<Groupe>();
+	private List<Fil> listeFils = new ArrayList<Fil>();
+	
 	
 	public VueUtilisateur() {
 		
@@ -100,10 +104,8 @@ public class VueUtilisateur extends JPanel {
 					tcm.getColumn(0).setCellRenderer(new RenduTableau());
 					JPanel messagep = new JPanel();
 					messagep.setLayout(new BorderLayout());
-					messagep.setBackground(Color.red);
 					messagep.add(messages, BorderLayout.NORTH);
 					JScrollPane scrollPane = new JScrollPane(messagep);
-					scrollPane.setBackground(Color.red);
 					scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 					
@@ -153,9 +155,23 @@ public class VueUtilisateur extends JPanel {
 		modeleTableau.fireTableDataChanged();
 	}
 	
-	public void setArbre(List<Groupe> lg, List<Fil> lf) {
-		modeleArbre.groupes = lg;
-		modeleArbre.fils = lf;
+	public void updateArbre() {
+		racine.removeAllChildren();
+		for (Groupe g : listeGroupes) {
+			racine.add(new DefaultMutableTreeNode(g.getLibelle()));
+			System.out.println("groupe");
+		}
+		for (int i = 0; i < listeGroupes.size(); i++) {
+			for (Fil f : listeFils) {
+				if (f.getDestination().equals(listeGroupes.get(i))) {
+					System.out.println("fil");
+					DefaultMutableTreeNode tn = (DefaultMutableTreeNode) racine.getChildAt(i);
+					tn.add(new DefaultMutableTreeNode(f.getTitre()));
+				}
+			}
+		}
+		System.out.println("Hey");
+		((DefaultTreeModel)arbreTickets.getModel()).reload();
 	}
 
 
@@ -194,7 +210,7 @@ public class VueUtilisateur extends JPanel {
 		
 		JTextField titreField = new JTextField();
 		
-		JComboBox<Groupe> groupeCombo = new JComboBox<>(); //TODO
+		JComboBox<Groupe> groupeCombo = new JComboBox<Groupe>(controleur.getTableGroupe()); //TODO
 		JTextArea zoneTexte = new JTextArea(); 
 		zoneTexte.setRows(3);
 		zoneTexte.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -211,10 +227,17 @@ public class VueUtilisateur extends JPanel {
 		JOptionPane jop = new JOptionPane();
 		int ok = jop.showConfirmDialog(this, panel, "Création de fil de discussion", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if (ok == JOptionPane.OK_OPTION) {
-			Groupe g = new Groupe(0, "test", new ArrayList<Utilisateur>());
-			Fil f =new Fil(0, titreField.getText(), g/*(Groupe)groupeCombo.getSelectedItem()*/, controleur.getModeleUtilisateur().getCurrentUser());
-			modeleArbre.groupes.add(g);
-			modeleArbre.fils.add(f);
+			Groupe g = (Groupe)groupeCombo.getSelectedItem();
+			Fil f =new Fil(0, titreField.getText(), g, controleur.getModeleUtilisateur().getCurrentUser());
+			if (!listeGroupes.contains(g)) {
+				listeGroupes.add(g);
+			}
+		
+			listeFils.add(f);
+			updateArbre();
+			
+			f.getMessages().add()
+			
 			return  f;
 		}
 		return null;

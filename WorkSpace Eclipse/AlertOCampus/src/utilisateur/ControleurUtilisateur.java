@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 
 public class ControleurUtilisateur implements Serializable, ActionListener{
@@ -48,6 +49,21 @@ public class ControleurUtilisateur implements Serializable, ActionListener{
 
 	public ModeleUtilisateur getModeleUtilisateur() {
 		return modeleUtilisateur;
+	}
+
+	public Groupe getListeGroupe() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Groupe[] getTableGroupe() {
+		List<Groupe> lg = new ArrayList<>();
+		lg = modeleUtilisateur.getListeGroupe();
+		Groupe[] tabGroupe = new Groupe[lg.size()];
+		for (int i = 0; i < lg.size(); i++) {
+			tabGroupe[i] = lg.get(i);
+		}
+		return tabGroupe;
 	}
 	
 
