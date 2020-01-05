@@ -1,6 +1,6 @@
 import javax.swing.JFrame;
 
-public class Application {
+public class ApplicationFrame {
 
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("Serveur AlertOCampus");

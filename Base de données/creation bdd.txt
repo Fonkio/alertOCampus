@@ -1,0 +1,49 @@
+CREATE TABLE Utilisateur(
+   Id_Utilisateur INT AUTO_INCREMENT,
+   Nom VARCHAR(50),
+   Prenom VARCHAR(50),
+   motDePasse VARCHAR(50),
+   PRIMARY KEY(Id_Utilisateur)
+);
+
+CREATE TABLE Groupe(
+   Id_Groupe INT AUTO_INCREMENT,
+   Libelle VARCHAR(50),
+   PRIMARY KEY(Id_Groupe)
+);
+
+CREATE TABLE Fil_de_discussion(
+   Id_Fil_de_discussion INT AUTO_INCREMENT,
+   Titre VARCHAR(50),
+   Id_Utilisateur INT NOT NULL,
+   Id_Groupe INT NOT NULL,
+   PRIMARY KEY(Id_Fil_de_discussion),
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id_Utilisateur),
+   FOREIGN KEY(Id_Groupe) REFERENCES Groupe(Id_Groupe)
+);
+
+CREATE TABLE Message(
+   Id_Message INT AUTO_INCREMENT,
+   Texte TEXT,
+   dCreation DATETIME,
+   Id_Fil_de_discussion INT NOT NULL,
+   PRIMARY KEY(Id_Message),
+   FOREIGN KEY(Id_Fil_de_discussion) REFERENCES Fil_de_discussion(Id_Fil_de_discussion)
+);
+
+CREATE TABLE Appartenir(
+   Id_Utilisateur INT,
+   Id_Groupe INT,
+   PRIMARY KEY(Id_Utilisateur, Id_Groupe),
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id_Utilisateur),
+   FOREIGN KEY(Id_Groupe) REFERENCES Groupe(Id_Groupe)
+);
+
+CREATE TABLE Envoyer(
+   Id_Utilisateur INT,
+   Id_Message INT,
+   Status VARCHAR(10),
+   PRIMARY KEY(Id_Utilisateur, Id_Message),
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id_Utilisateur),
+   FOREIGN KEY(Id_Message) REFERENCES Message(Id_Message)
+);
