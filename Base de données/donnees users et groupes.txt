@@ -6,6 +6,8 @@ INSERT INTO utilisateur(motDePasse, Nom, Prenom) VALUES ('$iutinfo', 'Louahadj',
 
 INSERT INTO utilisateur(motDePasse, Nom, Prenom)  VALUES ('$iutinfo', 'Fabre', 'Maxime');
 
+INSERT INTO utilisateur (login, motDePasse, Nom, Prenom) VALUES ('slm', 'pinpix', 'SALVAGNAC', 'Maxime');
+
 INSERT INTO groupe(Libelle) VALUES ('TDA3');
 
 INSERT INTO groupe(Libelle) VALUES ('Enseignants L3');

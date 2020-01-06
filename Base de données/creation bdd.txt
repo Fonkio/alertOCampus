@@ -2,6 +2,7 @@ CREATE TABLE Utilisateur(
    Id_Utilisateur INT AUTO_INCREMENT,
    Nom VARCHAR(50),
    Prenom VARCHAR(50),
+   login VARCHAR(100);
    motDePasse VARCHAR(50),
    PRIMARY KEY(Id_Utilisateur)
 );

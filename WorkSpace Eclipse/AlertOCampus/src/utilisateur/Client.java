@@ -17,16 +17,15 @@ public class Client {
 			socket = new Socket(InetAddress.getLocalHost(), PORT);
 			output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 		} catch (IOException e) {
-			e.printStackTrace();
+			e.printStackTrace();	 
 		}
 	}
 	
-	public void sendMessage(String message) {
-		output.println(message);
-		//TODO adapter le sendMessage en prenant en compte le nom du groupe 
+	public void sendMessage(String msg){
+		System.out.println("Message sent to server " + msg);
+		output.println(msg);
 	}
 	
-  //TODO créer fil
 	
 	public void closeConnection() {
 		output.close();

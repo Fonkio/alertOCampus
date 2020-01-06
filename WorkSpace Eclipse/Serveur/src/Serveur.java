@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -64,12 +65,12 @@ public class Serveur {
 	
 	
 	//Récupérer les membres d'un groupes triés dans l'ordre alphabétique
-	public Set<Utilisateur> getGroupMembers(int id) {
-		Set<Utilisateur> members = new TreeSet<>();
+	public NavigableSet<Utilisateur> getGroupMembers(int id) {
+		NavigableSet<Utilisateur> members = new TreeSet<>();
 		try {
 			Connection con = this.connectToDatabase();
 			PreparedStatement stmt = con.prepareStatement("SELECT Id_Utilisateur FROM appartenir WHERE Id_Groupe = ?");
-			stmt.setInt(1, id);
+			stmt.setInt(1, id);	
 			ResultSet rst = stmt.executeQuery();
 			while(rst.next()) {
 				int idUser = rst.getInt("Id_Utilisateur");
