@@ -6,12 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Message {
+public class Message implements Comparable<Message> {
 	private int idMessage;
-	public void setIdMessage(int idMessage) {
-		this.idMessage = idMessage;
-	}
-
 	private String texte;
 	private Date dCreation;
 	private Utilisateur expediteur;
@@ -26,6 +22,10 @@ public class Message {
 		for(Utilisateur u : destinataires) {
 			etatDestinataire.put(u, Status.EN_ATTENTE);
 		}
+	}
+	
+	public void setIdMessage(int idMessage) {
+		this.idMessage = idMessage;
 	}
 
 	public int getIdMessage() {
@@ -52,10 +52,11 @@ public class Message {
 		
 		return send ;
 	}
-	
-	
-	
-	
+
+	@Override
+	public int compareTo(Message m) {
+		return getdCreation().compareTo(m.getdCreation());
+	}
 	
 	
 }

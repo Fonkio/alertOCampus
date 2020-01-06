@@ -27,7 +27,7 @@ public class ModeleUtilisateur {
 	public List<Groupe> getListeGroupe() {
 		//Pour Tester
 		Utilisateur u1 = new Utilisateur(1, "FABRE", "Maxime");
-		Utilisateur u2 = new Utilisateur(2, "LOUAHADJ", "Inï¿½s");
+		Utilisateur u2 = new Utilisateur(2, "LOUAHADJ", "Inès");
 		Utilisateur u3 = new Utilisateur(3, "SALVAGNAC", "Maxime");
 		
 		List<Utilisateur> tda3 = new ArrayList<Utilisateur>();

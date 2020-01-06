@@ -2,23 +2,19 @@ package utilisateur;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Fil {
+public class Fil implements Comparable<Fil>{
 	
-	@Override
-	public String toString() {
-		return titre + "";
-	}
+	
+
+	
 
 	private int idFil;
-	public void setIdFil(int idFil) {
-		this.idFil = idFil;
-	}
-
 	private String titre;
-	private List<Message> messages = new ArrayList<>();
+	private NavigableSet<Message> messages = new TreeSet<>();
 	private Groupe destination;
 	private Utilisateur createur;
 	
@@ -29,6 +25,10 @@ public class Fil {
 		this.destination = destination;
 		this.createur = expediteur;
 	}
+	
+	public void setIdFil(int idFil) {
+		this.idFil = idFil;
+	}
 
 	public int getIdFil() {
 		return idFil;
@@ -38,7 +38,7 @@ public class Fil {
 		return titre;
 	}
 
-	public List<Message> getMessages() {
+	public NavigableSet<Message> getMessages() {
 		return messages;
 	}
 
@@ -49,7 +49,33 @@ public class Fil {
 	public Utilisateur getCreateur() {
 		return createur;
 	}
+
+	@Override
+	public int compareTo(Fil ftc) {
+		return ftc.getMessages().last().getdCreation().compareTo(getMessages().last().getdCreation());
+	}
 	
+	@Override
+	public String toString() {
+		return titre + "";
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + idFil;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (getClass() != obj.getClass())
+			return false;
+		Fil other = (Fil) obj;
+		if (idFil != other.idFil)
+			return false;
+		return true;
+	}
 	
 	
 }
