@@ -43,7 +43,7 @@ public class VueUtilisateur extends JPanel {
 	ControleurUtilisateur controleur;
 	private JLabel titreFil = new JLabel("Titre");
 	private JLabel dateFil = new JLabel("Date");
-	private JLabel createur = new JLabel("Crï¿½ateur");
+	private JLabel createur = new JLabel("Créateur");
 	private JLabel groupe = new JLabel("Groupe");
 	private ModeleTableau modeleTableau = new ModeleTableau();
 	private JTable messages = new JTable(modeleTableau);
@@ -66,7 +66,7 @@ public class VueUtilisateur extends JPanel {
 			/* ComposÃ© de l'arbre des tickets et le bouton de crï¿½ation des fils de discussion */
 			JPanel westPanel = new JPanel();
 			westPanel.setLayout(new BorderLayout());
-				
+				arbreTickets.addTreeSelectionListener(controleur);
 				JButton boutonCreationFil = new JButton(); //TODO factoriser Jtree et jbutton ?
 				boutonCreationFil.addActionListener(controleur);
 				boutonCreationFil.setText("Nouveau Fil");
@@ -160,7 +160,7 @@ public class VueUtilisateur extends JPanel {
 	public void updateArbre() {
 		racine.removeAllChildren();
 		for (Groupe g : listeGroupes) {
-			racine.add(new DefaultMutableTreeNode(g.getLibelle()));
+			racine.add(new DefaultMutableTreeNode(g));
 			System.out.println("groupe");
 		}
 		for (int i = 0; i < listeGroupes.size(); i++) {
@@ -168,7 +168,7 @@ public class VueUtilisateur extends JPanel {
 				if (f.getDestination().equals(listeGroupes.get(i))) {
 					System.out.println("fil");
 					DefaultMutableTreeNode tn = (DefaultMutableTreeNode) racine.getChildAt(i);
-					tn.add(new DefaultMutableTreeNode(f.getTitre()));
+					tn.add(new DefaultMutableTreeNode(f));
 				}
 			}
 		}
@@ -227,7 +227,7 @@ public class VueUtilisateur extends JPanel {
 		panel.add(messageLabel);
 		panel.add(zoneTexte);
 		JOptionPane jop = new JOptionPane();
-		int ok = jop.showConfirmDialog(this, panel, "CrÃ©ation de fil de discussion", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		int ok = jop.showConfirmDialog(this, panel, "Création de fil de discussion", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if (ok == JOptionPane.OK_OPTION) {
 			Groupe g = (Groupe)groupeCombo.getSelectedItem();
 			Fil f =new Fil(0, titreField.getText(), g, controleur.getModeleUtilisateur().getCurrentUser());
@@ -241,12 +241,22 @@ public class VueUtilisateur extends JPanel {
 			Message m = new Message(0, zoneTexte.getText(), new Date(), controleur.getModeleUtilisateur().getCurrentUser(), g.getListeUtilisateurs());
 			controleur.envoyerMessage(m, f);
 			f.getMessages().add(m);
-			List<Message> messages = new ArrayList<Message>(f.getMessages());
-			SetMessages(messages);
-			setInfoFil(f.getTitre(), messages.get(0).getdCreation().toString(), f.getCreateur().toString(), f.getDestination().getLibelle());
+			//List<Message> messages = new ArrayList<Message>(f.getMessages());
+			chargerFil(f);
 			
 		}
 	}
+
+	public void chargerFil(Fil f) {
+		SetMessages(f.getMessages());
+		setInfoFil(f.getTitre(), f.getMessages().get(0).getdCreation().toString(), f.getCreateur().toString(), f.getDestination().getLibelle());
+	}
+
+	public JTree getArbreTickets() {
+		return arbreTickets;
+	}
+	
+	
 
 	
 	

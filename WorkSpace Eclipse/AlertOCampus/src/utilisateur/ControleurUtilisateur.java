@@ -9,8 +9,11 @@ import java.util.List;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 
-public class ControleurUtilisateur implements Serializable, ActionListener{
+public class ControleurUtilisateur implements Serializable, ActionListener, TreeSelectionListener{
 	private VueUtilisateur vueUtilisateur;
 	private ModeleUtilisateur modeleUtilisateur;
 
@@ -71,6 +74,20 @@ public class ControleurUtilisateur implements Serializable, ActionListener{
 
 	public void envoyerMessage(Message m, Fil f) {
 		modeleUtilisateur.envoyerMessage(m, f);
+		
+	}
+
+	@Override
+	public void valueChanged(TreeSelectionEvent e) {
+		DefaultMutableTreeNode noeud = (DefaultMutableTreeNode)vueUtilisateur.getArbreTickets().getLastSelectedPathComponent();
+		if (noeud != null && noeud.isLeaf()) {
+			if (noeud.getUserObject() instanceof Fil) {
+				Fil f = (Fil)noeud.getUserObject();
+				vueUtilisateur.chargerFil(f);
+			}
+				
+			
+		}
 		
 	}
 	

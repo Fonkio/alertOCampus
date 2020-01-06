@@ -7,6 +7,11 @@ import java.util.TreeSet;
 
 public class Fil {
 	
+	@Override
+	public String toString() {
+		return titre + "";
+	}
+
 	private int idFil;
 	public void setIdFil(int idFil) {
 		this.idFil = idFil;
