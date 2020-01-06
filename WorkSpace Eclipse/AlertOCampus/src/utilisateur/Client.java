@@ -1,7 +1,9 @@
 package utilisateur;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -24,6 +26,15 @@ public class Client {
 	public void sendMessage(String msg){
 		System.out.println("Message sent to server " + msg);
 		output.println(msg);
+	}
+	
+	public void getResponse() {
+		try(BufferedReader plec = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+			String input = plec.readLine();
+			output.println("OUI" + input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	

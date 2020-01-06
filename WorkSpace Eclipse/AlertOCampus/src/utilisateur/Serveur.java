@@ -49,13 +49,14 @@ public class Serveur implements Runnable {
 					public void run() {
 						try{
 							BufferedReader plec = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+							PrintWriter output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 							boolean socketOuvert = true;
 							while (socketOuvert) {
 								try{
 									String input = plec.readLine();
 									if(input != null)
 									{
-										parseMessage(input);
+										output.println(parseMessage(input));
 									}
 								}catch(SocketException se){
 									socketOuvert=false;
@@ -70,74 +71,93 @@ public class Serveur implements Runnable {
 		}catch (IOException e) {e.printStackTrace();}
 	}
 	
-	private String messageGroups() {
-		StringBuilder sb = new StringBuilder("GET groups : \n");
-		List<Groupe> groups = dbmanager.getGroups();
+	/* Récupère l'ensemble des groupes et construit une chaîne réponse au client */
+	private String responseGroups() {
+		StringBuilder sb = new StringBuilder("GET groups response \n");
+		List<Groupe> groups = dbmanager.getGroups(); 
 		for(Groupe group : groups) {
 			sb.append(group.getIdGroupe() + " " + group.getLibelle() + "\n");
 		}
 		return sb.toString();
 	}
 	
-
-	private String parseMessage(String message) {
-		if (message.startsWith("GET members")) {
-			String[] msgSplit = message.split("\\s+");
-			int id = Integer.parseInt(msgSplit[2]);
+	/* Récupère les membres du groupe identifié par son id
+	 * La requête doit être de la forme "GET members <id>"
+	 */
+	private String responseMembers(String message) {
+		String[] msgSplit = message.split("\\s+");
+		int id = Integer.parseInt(msgSplit[2]);
+		NavigableSet<Utilisateur> members = dbmanager.getGroupMembers(id);
+		StringBuilder sb = new StringBuilder(message + "\n");
+		for(Utilisateur user : members) {
+			sb.append(user.getId() + " " + user.getNom() + " " + user.getPrenom() +  "\n");
+		}
+		return sb.toString();
+	}
+	
+	/*
+	 * Envoie les informations relatives à l'utilisateur demandé
+	 * Requête de la forme : "GET user with login <login>" OU
+	 *  "GET user with id <id>"
+	 *  Retourne la réponse sous la forme 
+	 *  "<requête>
+	 *  <id> <nom> <prénom>"
+	 */
+	private String responseUser(String message) {
+		StringBuilder sb = new StringBuilder(message + "\n");
+		// Décomposer la requête
+		String[] msgSplit = message.split("\\s+");
+		// Savoir si on filtre par id ou par login de l'utilisateur
+		String filtrage = msgSplit[3];
+		if (filtrage.equals("id")) {
+			int id = Integer.parseInt(msgSplit[4]);
 			NavigableSet<Utilisateur> members = dbmanager.getGroupMembers(id);
-			StringBuilder sb = new StringBuilder("GET members : \n");
 			for(Utilisateur user : members) {
 				sb.append(user.getId() + " " + user.getNom() + " " + user.getPrenom() +  "\n");
 			}
-			System.out.println(sb.toString());
-			return sb.toString();
-		}
-		 
-		if (message.startsWith("GET user")) {
-			String[] msgSplit = message.split("\\s+");
-			int id = Integer.parseInt(msgSplit[2]);
-			Utilisateur user = this.getUser(id);
-			StringBuilder sb = new StringBuilder("GET user : \n");
-				sb.append(user.getId() + " " + user.getNom() + " " + user.getPrenom() +  "\n");
-			System.out.println(sb.toString());
-			return sb.toString();
-		}
-		
-		if (message.startsWith("CONNECT ")) {
-			String[] msgSplit = message.split("\\s+");
-			String login = msgSplit[1];
-			String password = msgSplit[2];
-			StringBuilder sb = new StringBuilder("CONNECT " + login +  "\n");
-			if (isPasswordValid(login, password)) {
-				sb.append("Ok");
-			} else {
-				sb.append("Not OK");
-			}
-			System.out.println(sb.toString());
-			return sb.toString();
-		}
-		
-		
-		if (message.startsWith("GET login")) {
-			String[] msgSplit = message.split("\\s+");
-			String login = msgSplit[2];
-			Utilisateur user = this.getUser(login);
-			StringBuilder sb = new StringBuilder("GET user : \n");
+		} else if (filtrage.equals("login")) {
+			String login = msgSplit[4];
+			Utilisateur user = dbmanager.getUser(login);
 			sb.append(user.getId() + " " + user.getNom() + " " + user.getPrenom() +  "\n");
-			System.out.println(sb.toString());
-			return sb.toString();
 		}
-		
-		
-		switch(message) {
-		case "GET groups" :
-				return messageGroups();
-		default :
-					System.out.println("Message reçu : " + message);	
-					return message;
-					
+		return sb.toString();
+	}
+	
+	/* Répond au client sur la validité des identifiants de l'utilisateur 
+	 * Requête de la forme "CONNECT <login> <mdp>"
+	 * Réponse de la forme 
+	 * " <requête>
+	 * OK " Si la connexion est autorisée
+	 * " <requête>
+	 * NOT OK" Sinon
+	 */
+	private String responseToConnexion(String message) {
+		StringBuilder sb = new StringBuilder(message + "\n");
+		String[] msgSplit = message.split("\\s+");
+		String login = msgSplit[1];
+		String password = msgSplit[2];
+		if (dbmanager.isPasswordValid(login, password)) {
+			sb.append("Ok");
+		} else {
+			sb.append("NOT OK");
 		}
-		server.
+		return sb.toString();
+	}
+
+	/* Construit une réponse adaptées à chaque cas de message que le client peut envoyer */
+	private String parseMessage(String message) {
+		String response = null;
+		if (message.startsWith("GET members")) {
+			response = responseMembers(message);
+		} else if (message.startsWith("GET user")) {
+			response = responseUser(message);
+		} else if (message.startsWith("CONNECT ")) {
+			response = responseToConnexion(message);
+		} else {
+			response = "Message reçu : " + message ;	
+		}
+		System.out.println(response);
+		return response;
 	}
 	
 	public static void main(String[] args){
