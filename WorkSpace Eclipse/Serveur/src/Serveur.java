@@ -1,6 +1,7 @@
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -45,9 +46,10 @@ public class Serveur {
 		Utilisateur user = null;
 		try {
 			Connection con = this.connectToDatabase();
-			Statement stmt =  con.createStatement();
-			ResultSet rst = stmt.executeQuery("SELECT Id_Utilisateur, Prenom, Nom from Utilisateur"
-					+ "WHERE Id_Utilisateur =" + id);
+			PreparedStatement stmt =  con.prepareStatement("SELECT Id_Utilisateur, Prenom, Nom FROM Utilisateur"
+					+ " WHERE Id_Utilisateur = ?");
+			stmt.setInt(1, id);
+			ResultSet rst = stmt.executeQuery();
 			while(rst.next()) {
 				int idUser = rst.getInt("Id_Utilisateur");
 				String nom = rst.getString("Nom");
@@ -60,13 +62,15 @@ public class Serveur {
 		return user;
 	}
 	
+	
+	//Récupérer les membres d'un groupes triés dans l'ordre alphabétique
 	public Set<Utilisateur> getGroupMembers(int id) {
 		Set<Utilisateur> members = new TreeSet<>();
 		try {
 			Connection con = this.connectToDatabase();
-			Statement stmt =  con.createStatement();
-			ResultSet rst = stmt.executeQuery("SELECT Id_Utilisateur FROM appartenir"
-					+ "WHERE Id_Groupe = " + id);
+			PreparedStatement stmt = con.prepareStatement("SELECT Id_Utilisateur FROM appartenir WHERE Id_Groupe = ?");
+			stmt.setInt(1, id);
+			ResultSet rst = stmt.executeQuery();
 			while(rst.next()) {
 				int idUser = rst.getInt("Id_Utilisateur");
 				Utilisateur currentUser = this.getUser(idUser);
@@ -96,5 +100,73 @@ public class Serveur {
 		return groups;
 	}
 	
+	public void removeUserFromGroup(Utilisateur user, Groupe group) {
+		try {
+			Connection con = this.connectToDatabase();
+			PreparedStatement stmt =  con.prepareStatement("DELETE FROM appartenir WHERE Id_Utilisateur = ? AND Id_Groupe = ?");
+			stmt.setInt(1, user.getId());
+			stmt.setInt(2, group.getId());
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	public void addUserToGroup(Utilisateur user, Groupe group) {
+		try {
+			Connection con = this.connectToDatabase();
+			PreparedStatement stmt =  con.prepareStatement("INSERT INTO appartenir VALUES ( ? , ? )");
+			stmt.setInt(1, user.getId());
+			stmt.setInt(2, group.getId());
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	public void deleteUser(Utilisateur user) {
+		try {
+			Connection con = this.connectToDatabase();
+			PreparedStatement stmt =  con.prepareStatement("DELETE FROM Utilisateur WHERE Id_Utilisateur = ?");
+			stmt.setInt(1, user.getId());
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	public void addUser(String nom, String prenom) {
+		try {
+			Connection con = this.connectToDatabase();
+			PreparedStatement stmt =  con.prepareStatement("INSERT INTO utilisateur(Nom, Prenom)  VALUES (? , ?)");
+			stmt.setString(1, nom);
+			stmt.setString(1, prenom);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	public void deleteGroup(Groupe group) {
+		try {
+			Connection con = this.connectToDatabase();
+			PreparedStatement stmt =  con.prepareStatement("DELETE FROM Groupe WHERE Id_Groupe = ?");
+			stmt.setInt(1, group.getId());
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+	}
+	
+	public void addGroup (String libelle) {
+		try {
+			Connection con = this.connectToDatabase();
+			PreparedStatement stmt =  con.prepareStatement("INSERT INTO Groupe(Libelle)  VALUES (?)");
+			stmt.setString(1, libelle);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+	}
 	
 }
