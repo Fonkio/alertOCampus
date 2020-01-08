@@ -137,7 +137,8 @@ public class Serveur implements Runnable {
 		String login = msgSplit[1];
 		String password = msgSplit[2];
 		if (dbmanager.isPasswordValid(login, password)) {
-			sb.append("Ok");
+			Utilisateur user = dbmanager.getUser(login);
+			sb.append(user.getId() + " " + user.toString());
 		} else {
 			sb.append("NOT OK");
 		}
