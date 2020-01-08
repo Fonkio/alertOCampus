@@ -88,10 +88,10 @@ public class ServeurModele {
 				PreparedStatement stmt = con.prepareStatement("SELECT Id_Groupe FROM appartenir WHERE Id_Utilisateur = ?");){
 			stmt.setInt(1, id);	
 			try(ResultSet rst = stmt.executeQuery();) {
-				while(rst.next()) {
+				while(rst.next())  {
 					int idGroup = rst.getInt("Id_Groupe");
 					Groupe currentGroup = this.getGroup(idGroup);
-					groups.add(currentGroup);
+					if (currentGroup != null) { groups.add(currentGroup);}
 				}	
 			}
 		} catch (SQLException e) {
@@ -200,10 +200,45 @@ public class ServeurModele {
 			Connection con = this.connectToDatabase();
 			PreparedStatement stmt =  con.prepareStatement("INSERT INTO Groupe(Libelle)  VALUES (?)");
 			stmt.setString(1, libelle);
-			stmt.executeUpdate();
+			stmt.getFetchSize();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}	
 	}
+	
+	public boolean isMember(Groupe group, Utilisateur user) {
+		boolean ismember = false;
+		if (group != null && user != null) {
+			try (Connection con = this.connectToDatabase();
+			PreparedStatement stmt =  con.prepareStatement("SELECT Id_Utilisateur FROM appartenir WHERE id_Groupe = ? AND id_Utilisateur = ?")) {
+			   stmt.setInt(1, group.getId());
+			   stmt.setInt(2, user.getId());
+			   try(ResultSet rst = stmt.executeQuery();) {
+				   rst.last();
+					ismember = rst.getRow() == 1;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			};
+		}
+		return ismember;
+	}
+	
+	public void deleteMemberFromGroup(Groupe group, Utilisateur user) {
+		if (group != null && user != null) {
+			try (Connection con = this.connectToDatabase();
+			PreparedStatement stmt =  con.prepareStatement("DELETE FROM appartenir WHERE id_Groupe = ? AND id_Utilisateur = ?")) {
+			   stmt.setInt(1, group.getId());
+			   stmt.setInt(2, user.getId());
+			   stmt.executeUpdate();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+	
 	
 }

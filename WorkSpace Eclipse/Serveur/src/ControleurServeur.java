@@ -18,6 +18,7 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 	private VueServeur vue;
 	private ServeurModele serveur;
 	private PaneState panestate;
+	private final Utilisateur defaultUser = new Utilisateur(0, "utilisateur", "Nouvel");
 	
 	
 	public PaneState getPanestate() {
@@ -58,9 +59,62 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 				deleteSelectionFromMainList();
 			break;
 		case "Supprimer du groupe" :
+				deleteSelectionFromSecondaryList();
 			break;
+				
+		case "Nouveau groupe":
+			
+			break;
+		case "Nouvel utilisateur":
+			addUser();
+			break;
+		case "Ajouter" :
+			addUserToGroup();
+			break;
+		case "Sauvegarder les modifications" :
+			
 		}
 
+	}
+
+	private void addUser() {
+
+		this.vue.listeUsers.addElement(this.defaultUser);
+
+	}
+	
+	private void sauvegarder() {
+		switch(panestate) {
+		case GROUPES :
+			
+			break;
+		case UTILISATEURS :
+		}
+	}
+	private void addUserToGroup() {
+		Groupe selectedGroup = (Groupe) this.vue.ajoutGroupeCB.getSelectedItem();
+		Utilisateur selectedUser = (Utilisateur) vue.getSelectedMainElement();
+		if (! this.serveur.isMember(selectedGroup, selectedUser)) {
+			this.serveur.addUserToGroup(selectedUser, selectedGroup);
+			this.vue.addGroupOfMember(selectedGroup);
+		}
+	}
+	
+	private void deleteSelectionFromSecondaryList() {
+		switch(panestate) {
+			case UTILISATEURS :
+				Utilisateur selectedMainUser = (Utilisateur) vue.getSelectedMainElement();
+				Groupe selectedSecondaryGroup = (Groupe) vue.getSelectedSecondaryElement();
+				this.serveur.deleteMemberFromGroup(selectedSecondaryGroup, selectedMainUser);
+				this.vue.listeGroupesDeMembre.removeElement(selectedSecondaryGroup);
+				break;
+			case GROUPES :
+				Groupe selectedMainGroup = (Groupe) vue.getSelectedMainElement();
+				Utilisateur selectedSecondaryUser = (Utilisateur) vue.getSelectedSecondaryElement();
+				this.serveur.deleteMemberFromGroup(selectedMainGroup, selectedSecondaryUser);
+				this.vue.listeMembresDeGroupe.removeElement(selectedSecondaryUser);
+				break;
+		}
 	}
 
 	private void deleteSelectionFromMainList() {
@@ -70,20 +124,21 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 				this.serveur.deleteUser(selectedUser);
 				this.vue.listeUsers.removeElement(selectedUser);
 				this.vue.resetFormUser();
-				this.vue.disableSaveBtn();
 				break;
 			case GROUPES :
 				Groupe selectedGroup = (Groupe) vue.getSelectedMainElement();
 				this.serveur.deleteGroup(selectedGroup);
-				this.afficherListeGroupes();
+				this.vue.listeGroupes.removeElement(selectedGroup);
+				this.vue.ajoutGroupeCB.removeItem(selectedGroup);
+				this.vue.resetFormGroup();
 				break;
 		}
+		this.vue.disableSelectionBtn();
 	}
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		if (! e.getValueIsAdjusting() ) {		
-			
 			switch (panestate) {
 			case UTILISATEURS :
 				JList<Utilisateur> users = (JList<Utilisateur>) e.getSource();
@@ -112,7 +167,7 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 				}
 			
 			}
-				
+		this.vue.enableSelectionBtn();
 			
 		}
 	}

@@ -1,8 +1,10 @@
+
+
 CREATE TABLE Utilisateur(
    Id_Utilisateur INT AUTO_INCREMENT,
    Nom VARCHAR(50),
    Prenom VARCHAR(50),
-   login VARCHAR(100);
+   login VARCHAR(100),
    motDePasse VARCHAR(50),
    PRIMARY KEY(Id_Utilisateur)
 );
@@ -48,3 +50,25 @@ CREATE TABLE Envoyer(
    FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id_Utilisateur),
    FOREIGN KEY(Id_Message) REFERENCES Message(Id_Message)
 );
+
+INSERT INTO utilisateur(motDePasse, Nom, Prenom)  VALUES ('pinpix', 'Doe', 'John');
+
+INSERT INTO utilisateur(motDePasse, Nom, Prenom)  VALUES ('pinpin', 'Costa', 'Marie');
+
+INSERT INTO utilisateur(motDePasse, Nom, Prenom) VALUES ('$iutinfo', 'Louahadj', 'Ines');
+
+INSERT INTO utilisateur(motDePasse, Nom, Prenom)  VALUES ('$iutinfo', 'Fabre', 'Maxime');
+
+INSERT INTO utilisateur (login, motDePasse, Nom, Prenom) VALUES ('slm', 'pinpix', 'SALVAGNAC', 'Maxime');
+
+INSERT INTO groupe(Libelle) VALUES ('TDA3');
+
+INSERT INTO groupe(Libelle) VALUES ('Enseignants L3');
+
+INSERT INTO appartenir VALUES (1, 2);
+
+INSERT INTO appartenir VALUES (2, 2);
+
+INSERT INTO appartenir VALUES (3, 1);
+
+INSERT INTO appartenir VALUES (4, 1);
