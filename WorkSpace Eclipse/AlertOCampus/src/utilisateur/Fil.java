@@ -7,7 +7,7 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Fil implements Comparable<Fil>, Serializable{
+public class Fil implements Serializable{
 	
 	
 
@@ -49,11 +49,6 @@ public class Fil implements Comparable<Fil>, Serializable{
 
 	public Utilisateur getCreateur() {
 		return createur;
-	}
-
-	@Override
-	public int compareTo(Fil ftc) {
-		return ftc.getMessages().last().getdCreation().compareTo(getMessages().last().getdCreation());
 	}
 	
 	@Override

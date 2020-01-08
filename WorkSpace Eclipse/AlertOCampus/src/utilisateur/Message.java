@@ -56,7 +56,7 @@ public class Message implements Comparable<Message>, Serializable{
 
 	@Override
 	public int compareTo(Message m) {
-		return getdCreation().compareTo(m.getdCreation());
+		return m.getdCreation().compareTo(getdCreation());
 	}
 	
 	

@@ -21,7 +21,7 @@ public class ModeleUtilisateur implements Serializable {
 	Client c = new Client();
 	
 	public ModeleUtilisateur(String user, String password) {
-		//currentUser = new Utilisateur(1, "FABRE", "Maxime"); //Ligne pour test
+		currentUser = new Utilisateur(1, "FABRE", "Maxime"); //Ligne pour test
 		if (user.equals("") || password.equals("")) {
 			System.out.println("CHAMP VIDE");
 		} else {

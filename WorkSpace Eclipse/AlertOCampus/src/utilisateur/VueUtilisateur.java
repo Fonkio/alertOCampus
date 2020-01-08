@@ -4,6 +4,7 @@ package utilisateur;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.NavigableSet;
 import java.util.TreeSet;
@@ -40,7 +41,13 @@ public class VueUtilisateur extends JPanel implements Serializable {
 	private DefaultMutableTreeNode racine = new DefaultMutableTreeNode("Groupes");
 	private JTree arbreTickets = new JTree(racine) ;
 	private NavigableSet<Groupe> listeGroupes = new TreeSet<Groupe>();
-	private NavigableSet<Fil> listeFils = new TreeSet<Fil>();
+	private NavigableSet<Fil> listeFils = new TreeSet<Fil>(new Comparator<Fil>() {
+
+		@Override
+		public int compare(Fil o1, Fil o2) {
+			return o2.getMessages().first().getdCreation().compareTo(o1.getMessages().first().getdCreation());
+		}
+	});
 	private Fil selectedFil;
 
 	public VueUtilisateur() {
@@ -264,6 +271,7 @@ public class VueUtilisateur extends JPanel implements Serializable {
 			//ON L'AJOUTE AU FIL
 			f.getMessages().add(m);
 			listeFils.add(f); //ON AJOUTE LE FILS POUR METTRE A JOUR L'ARBRE
+			System.out.println("Ajout fil : "+f.getTitre());
 			updateArbre(); //MISE A JOUR DE LA STRUCTURE DE L'ARBRE
 			//ON CHARGE LE FIL
 			chargerFil(f);
