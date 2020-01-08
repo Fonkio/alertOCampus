@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -19,6 +20,10 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 	private PaneState panestate;
 	
 	
+	public PaneState getPanestate() {
+		return panestate;
+	}
+
 	public ControleurServeur(VueServeur vue) {
 		this.vue = vue;
 		this.serveur = new ServeurModele();
@@ -38,15 +43,42 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 		List<Groupe> groups = serveur.getGroups();
 		for (Groupe group : groups) {
 			vue.addGroup(group);
+			vue.addGroupeToComboBox(group);
 		}
 	}
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		System.out.println("a");
+		JButton btn = (JButton) e.getSource();
+		String btnText = btn.getText();
+		switch(btnText) {
+		case "Supprimer" :
+				deleteSelectionFromMainList();
+			break;
+		case "Supprimer du groupe" :
+			break;
+		}
 
 	}
 
+	private void deleteSelectionFromMainList() {
+		switch(panestate) {
+			case UTILISATEURS :
+				Utilisateur selectedUser = (Utilisateur) vue.getSelectedMainElement();
+				this.serveur.deleteUser(selectedUser);
+				this.vue.listeUsers.removeElement(selectedUser);
+				this.vue.resetFormUser();
+				this.vue.disableSaveBtn();
+				break;
+			case GROUPES :
+				Groupe selectedGroup = (Groupe) vue.getSelectedMainElement();
+				this.serveur.deleteGroup(selectedGroup);
+				this.afficherListeGroupes();
+				break;
+		}
+	}
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
@@ -56,24 +88,28 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 			case UTILISATEURS :
 				JList<Utilisateur> users = (JList<Utilisateur>) e.getSource();
 				Utilisateur currentUser = users.getSelectedValue();
-				vue.setNomUserTF(currentUser.getNom());
-				vue.setPrenomUserTF(currentUser.getPrenom());
-				Set<Groupe> groupsOfUser = this.serveur.getGroupsOfUser(currentUser.getId());
-				vue.resetGroupOfMemberList();
-				for(Groupe group : groupsOfUser) {
-					vue.addGroupOfMember(group);
-				}
+				if (currentUser != null) {
+					vue.setNomUserTF(currentUser.getNom());
+					vue.setPrenomUserTF(currentUser.getPrenom());
+					Set<Groupe> groupsOfUser = this.serveur.getGroupsOfUser(currentUser.getId());
+					System.out.println(groupsOfUser);
+					vue.resetGroupOfMemberList();
+					for(Groupe group : groupsOfUser) {
+						vue.addGroupOfMember(group);
+					}
+				}	
 				break;
 			case GROUPES :
 				JList<Groupe> groups = (JList<Groupe>) e.getSource();
 				Groupe currentGroup = groups.getSelectedValue();
-				vue.setNomGroupeTF(currentGroup.getLibelle());
-				Set<Utilisateur> members = this.serveur.getGroupMembers(currentGroup.getId());
-				vue.resetMemberOfGroupList();
-				for(Utilisateur user : members) {
-					vue.addMemberOfGroup(user);
+				if (currentGroup != null) {
+					vue.setNomGroupeTF(currentGroup.getLibelle());
+					Set<Utilisateur> members = this.serveur.getGroupMembers(currentGroup.getId());
+					vue.resetMemberOfGroupList();
+					for(Utilisateur user : members) {
+						vue.addMemberOfGroup(user);
+					}
 				}
-				break;
 			
 			}
 				

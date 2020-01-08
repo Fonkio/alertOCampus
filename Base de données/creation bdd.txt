@@ -36,8 +36,8 @@ CREATE TABLE Appartenir(
    Id_Utilisateur INT,
    Id_Groupe INT,
    PRIMARY KEY(Id_Utilisateur, Id_Groupe),
-   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id_Utilisateur),
-   FOREIGN KEY(Id_Groupe) REFERENCES Groupe(Id_Groupe)
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id_Utilisateur) ON DELETE CASCADE,
+   FOREIGN KEY(Id_Groupe) REFERENCES Groupe(Id_Groupe) ON DELETE CASCADE
 );
 
 CREATE TABLE Envoyer(

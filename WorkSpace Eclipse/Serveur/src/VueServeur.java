@@ -3,6 +3,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.Serializable;
 import java.util.List;
+import java.util.NavigableSet;
+import java.util.Set;
 import java.util.TreeSet;
 
 import javax.sound.sampled.BooleanControl;
@@ -31,21 +33,25 @@ public class VueServeur extends JTabbedPane implements Serializable{
 	private static final int NB_TABS = 2; // Index 0 = Groupe et Index 1 = Utilisateur
 	private ControleurServeur controleur;
 	
-	private DefaultListModel<Groupe> listeGroupes; //Liste du panneau de gauche pour l'onglet Groupes
-	private DefaultListModel<Utilisateur> listeMembresDeGroupe; //Liste du panneau de droite pour l'onglet Groupes
-	private DefaultListModel<Utilisateur> listeUsers; //Liste du panneau de gauche pour l'onglet Utilisateurs
-	private DefaultListModel<Groupe> listeGroupesDeMembre; //Liste du panneau de droite pour l'onglet Utilisateurs
+	protected DefaultListModel<Groupe> listeGroupes; //Liste du panneau de gauche pour l'onglet Groupes
+	protected  DefaultListModel<Utilisateur> listeMembresDeGroupe; //Liste du panneau de droite pour l'onglet Groupes
+	protected  DefaultListModel<Utilisateur> listeUsers; //Liste du panneau de gauche pour l'onglet Utilisateurs
+	protected  DefaultListModel<Groupe> listeGroupesDeMembre; //Liste du panneau de droite pour l'onglet Utilisateurs
 	
 	private JList<Utilisateur> listeGaucheUsers;
 	private JList<Groupe> listeGaucheGroups;
 	private JList<Groupe> listeDroiteUsers;
 	private JList<Utilisateur> listeDroiteGroups;
 	
+	private JComboBox<Groupe> ajoutGroupeCB;
+	
 	//private 
 	private JTextField nomGroupeTF;
 	private JTextField nomUserTF;
 	private JTextField prenomUserTF;
 	private JButton[] addBtn = new JButton[NB_TABS];
+	private JButton[] deleteBtn = new JButton[NB_TABS];
+	private JButton[] saveBtn = new JButton[NB_TABS];
 	
 	public VueServeur () {
 		this.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -84,6 +90,15 @@ public class VueServeur extends JTabbedPane implements Serializable{
 		listeGroupesDeMembre.clear();
 	}
 	
+	public void resetMainGroupList() {
+		listeMembresDeGroupe.clear();
+	}
+	
+	public void resetMainUserList() {
+		listeGroupesDeMembre.clear();
+	}
+	
+	
 	
 	public void setNomGroupeTF(String newName) {
 		this.nomGroupeTF.setText(newName);
@@ -96,21 +111,62 @@ public class VueServeur extends JTabbedPane implements Serializable{
 	public void setPrenomUserTF(String newName) {
 		this.prenomUserTF.setText(newName);
 	}
+	
+	public void addGroupeToComboBox(Groupe groupe) {
+		this.ajoutGroupeCB.addItem(groupe);
+	}
+	
+	public void resetFormUser() {
+		this.nomUserTF.setText(null);
+		this.prenomUserTF.setText(null);
+		this.listeGroupesDeMembre.clear();
+	}
 
+	public void disableSaveBtn() {
+		switch(this.controleur.getPanestate()) {
+			case GROUPES :
+				this.saveBtn[0].setEnabled(false);
+				break;
+			case UTILISATEURS :
+				this.saveBtn[1].setEnabled(false);
+		}
+	}
+	
+	public void enableSaveBtn() {
+		switch(this.controleur.getPanestate()) {
+			case GROUPES :
+				this.saveBtn[0].setEnabled(true);
+				break;
+			case UTILISATEURS :
+				this.saveBtn[1].setEnabled(true);
+		}
+	}
+	
 	private void addListeners() {
 		// Ecouteur pour changement d'état du controleur quand on change d'onglet 
 		this.addChangeListener(this.controleur);
 		
-		// Ecouter sur les boutons d'ajout
+		// Ecouter sur les boutons d'ajout et de suppression
 		for (int i = 0; i < NB_TABS; i++) {
 			this.addBtn[i].addActionListener(controleur);
+			this.deleteBtn[i].addActionListener(controleur);
 		}
 		
 		// Ecoute les listes de gauche de chaque onglet (en sélectionnant)
 		listeGaucheUsers.addListSelectionListener(controleur);
 		listeGaucheGroups.addListSelectionListener(controleur);
-		//listeDroiteGroups.addListSelectionListener(controleur);
-		//listeDroiteUsers.addListSelectionListener(controleur);
+
+	}
+	
+	public Object getSelectedMainElement() {
+		switch(controleur.getPanestate()) {
+			case GROUPES :
+					return this.listeGaucheGroups.getSelectedValue();
+			case UTILISATEURS :
+					return this.listeGaucheUsers.getSelectedValue();
+			default : 
+					return null;
+		}
 	}
 	private void constructUserPane() {
 		JSplitPane panel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -131,9 +187,9 @@ public class VueServeur extends JTabbedPane implements Serializable{
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new FlowLayout());
 		this.addBtn[1] = new JButton("Nouvel utilisateur");
-		JButton buttonDelete = new JButton("Supprimer");
+		deleteBtn[1] = new JButton("Supprimer");
 		buttonsPanel.add(this.addBtn[1]);
-		buttonsPanel.add(buttonDelete);
+		buttonsPanel.add(deleteBtn[1]);
 		
 		// Ajout des éléments à la partie gauche
 		JPanel partieGauche = new JPanel();
@@ -162,7 +218,7 @@ public class VueServeur extends JTabbedPane implements Serializable{
 		
 		// Sélection de groupes
 		JLabel ajoutLabel = new JLabel("Ajouter l'utilisateur à un groupe");
-		JComboBox<String> ajoutGroupeCB = new JComboBox<>();
+		this.ajoutGroupeCB = new JComboBox<>();
 		ajoutGroupeCB.setMaximumSize(new Dimension(Integer.MAX_VALUE, this.nomUserTF.getPreferredSize().height));
 		
 		// Liste des groupes auxquels appartient le membre sélectionné
@@ -172,7 +228,7 @@ public class VueServeur extends JTabbedPane implements Serializable{
 		JButton supprimerDuGroupeBtn = new JButton("Supprimer du groupe");
 		
 		// Bouton pour sauvegarder les modifications
-		JButton sauvegarder = new JButton("Sauvegarder les modifications");	
+		this.saveBtn[1] = new JButton("Sauvegarder les modifications");	
 		
 		// Mise en forme de chaque compartiment 
 		// GroupLayout avec le champ de saisie du nom et du prénom
@@ -207,7 +263,7 @@ public class VueServeur extends JTabbedPane implements Serializable{
 		// Bouton sauvegarder placé à droite
 		Box box3 = new Box(BoxLayout.LINE_AXIS);
 		box3.add(Box.createHorizontalGlue());
-		box3.add(sauvegarder);
+		box3.add(this.saveBtn[1]);
 		
 		// Ajout de tous les éléments créés au panneau de droite
 		JPanel partieDroite = new JPanel();
@@ -249,9 +305,9 @@ public class VueServeur extends JTabbedPane implements Serializable{
 	JPanel buttonsPanel = new JPanel();
 	buttonsPanel.setLayout(new FlowLayout());
 	this.addBtn[0]= new JButton("Nouveau groupe");
-	JButton buttonDelete = new JButton("Supprimer");
+	this.deleteBtn[0] = new JButton("Supprimer");
 	buttonsPanel.add(this.addBtn[0]);
-	buttonsPanel.add(buttonDelete);
+	buttonsPanel.add(this.deleteBtn[0]);
 	
 	// Création de la partie gauche et ajout au panneau de groupes principal
 	JPanel partieGauche = new JPanel();
@@ -281,7 +337,7 @@ public class VueServeur extends JTabbedPane implements Serializable{
 	JButton supprimerDuGroupeBtn = new JButton("Supprimer du groupe");
 	
 	// Bouton pour sauvegarder les modifications
-	JButton sauvegarder = new JButton("Sauvegarder les modifications");	
+	this.saveBtn[0] = new JButton("Sauvegarder les modifications");	
 	
 	// Mise en forme de chaque compartiment de la partie sous forme de Box
 	// Champ de saisie du nom
@@ -299,7 +355,7 @@ public class VueServeur extends JTabbedPane implements Serializable{
 	// Bouton sauvegarder placé à droite
 	Box box3 = new Box(BoxLayout.LINE_AXIS);
 	box3.add(Box.createHorizontalGlue());
-	box3.add(sauvegarder);
+	box3.add(this.saveBtn[0]);
 	
 	// Ajout de tous les box au panneau de droite
 	JPanel partieDroite = new JPanel();

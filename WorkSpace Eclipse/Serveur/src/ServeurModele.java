@@ -74,7 +74,7 @@ public class ServeurModele {
 			while(rst.next()) {
 				int idUser = rst.getInt("Id_Utilisateur");
 				Utilisateur currentUser = this.getUser(idUser);
-				members.add(currentUser);
+				if (currentUser != null) { members.add(currentUser);}
 			}	
 		} catch (SQLException e) {
 			e.printStackTrace();

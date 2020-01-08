@@ -1,4 +1,4 @@
 
 public enum PaneState {
-	UTILISATEURS, GROUPES
+	GROUPES, UTILISATEURS
 }

@@ -156,6 +156,7 @@ public class Serveur implements Runnable {
 		} else {
 			response = "Message reçu : " + message ;	
 		}
+		response += "\nEND";
 		System.out.println(response);
 		return response;
 	}
