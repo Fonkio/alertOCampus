@@ -46,9 +46,9 @@ public class VueServeur extends JTabbedPane implements Serializable{
 	protected JComboBox<Groupe> ajoutGroupeCB;
 	
 	//private 
-	private JTextField nomGroupeTF;
-	private JTextField nomUserTF;
-	private JTextField prenomUserTF;
+	protected JTextField nomGroupeTF;
+	protected JTextField nomUserTF;
+	protected JTextField prenomUserTF;
 	private JButton[] addBtn = new JButton[NB_TABS];
 	private JButton[] deleteBtn = new JButton[NB_TABS];
 	private JButton[] deleteUserFromGroupBtn = new JButton[NB_TABS];
@@ -133,11 +133,13 @@ public class VueServeur extends JTabbedPane implements Serializable{
 		switch(this.controleur.getPanestate()) {
 			case GROUPES :
 				this.saveBtn[0].setEnabled(false);
+				this.listeGaucheGroups.clearSelection();
 				break;
 			case UTILISATEURS :
 				this.saveBtn[1].setEnabled(false);
 				this.ajoutGroupeCB.setEnabled(false);
 				this.ajoutUtilisateurGroupeOKBtn.setEnabled(false);
+				this.listeGaucheUsers.clearSelection();
 		}
 	}
 	
@@ -153,6 +155,10 @@ public class VueServeur extends JTabbedPane implements Serializable{
 		}
 	}
 	
+	public boolean areUserTFEmpty() {
+		return this.nomGroupeTF.getText().isEmpty() || this.prenomUserTF.getText().isEmpty();
+	}
+	
 	private void addListeners() {
 		// Ecouteur pour changement d'état du controleur quand on change d'onglet 
 		this.addChangeListener(this.controleur);
@@ -162,6 +168,7 @@ public class VueServeur extends JTabbedPane implements Serializable{
 			this.addBtn[i].addActionListener(controleur);
 			this.deleteBtn[i].addActionListener(controleur);
 			this.deleteUserFromGroupBtn[i].addActionListener(controleur);
+			this.saveBtn[i].addActionListener(controleur);
 		}
 		
 		// Ecouter le bouton d'ajout d'un membre à un groupe 

@@ -82,6 +82,27 @@ public class ServeurModele {
 		return members;
 	}
 	
+	public void updateUser(String nom, String prenom) {
+		try (Connection con = this.connectToDatabase();
+				PreparedStatement stmt =  con.prepareStatement("UPDATE utilisateur SET Nom = ? , Prenom = ?")){
+				stmt.setString(1, nom);
+				stmt.setString(1, prenom);
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}	
+	}
+	
+	public void updateGroup(String libelle) {
+		try (Connection con = this.connectToDatabase();
+				PreparedStatement stmt =  con.prepareStatement("UPDATE groupe SET libelle = ?")){
+				stmt.setString(1, libelle);
+				stmt.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}	
+	}
+	
 	public NavigableSet<Groupe> getGroupsOfUser(int id) {
 		NavigableSet<Groupe> groups = new TreeSet<>();
 		try (Connection con = this.connectToDatabase();
@@ -172,16 +193,21 @@ public class ServeurModele {
 		}	
 	}
 	
-	public void addUser(String nom, String prenom) {
-		try {
-			Connection con = this.connectToDatabase();
-			PreparedStatement stmt =  con.prepareStatement("INSERT INTO utilisateur(Nom, Prenom)  VALUES (? , ?)");
+	public Utilisateur addUser(String nom, String prenom) {
+		Utilisateur user = null;
+		try (Connection con = this.connectToDatabase();
+			PreparedStatement stmt =  con.prepareStatement("INSERT INTO utilisateur(Nom, Prenom)  VALUES (? , ?)");){
 			stmt.setString(1, nom);
 			stmt.setString(1, prenom);
 			stmt.executeUpdate();
+			try(ResultSet rs = stmt.getGeneratedKeys()) {
+				rs.last();
+				user = new Utilisateur(rs.getInt(1), nom, prenom);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}	
+		return user;
 	}
 	
 	public void deleteGroup(Groupe group) {
@@ -195,15 +221,20 @@ public class ServeurModele {
 		}	
 	}
 	
-	public void addGroup (String libelle) {
-		try {
-			Connection con = this.connectToDatabase();
-			PreparedStatement stmt =  con.prepareStatement("INSERT INTO Groupe(Libelle)  VALUES (?)");
+	public Groupe addGroup (String libelle) {
+		Groupe group = null;
+		try (Connection con = this.connectToDatabase();
+			PreparedStatement stmt =  con.prepareStatement("INSERT INTO Groupe(Libelle)  VALUES (?)");){
 			stmt.setString(1, libelle);
-			stmt.getFetchSize();
+			stmt.executeUpdate();
+			try(ResultSet rs = stmt.getGeneratedKeys()) {
+				rs.last();
+				group = new Groupe(rs.getInt(1), libelle, this.getGroupMembers(rs.getInt(1)));
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}	
+		return group;
 	}
 	
 	public boolean isMember(Groupe group, Utilisateur user) {
