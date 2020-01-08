@@ -152,6 +152,7 @@ public class Serveur implements Runnable {
 		} else if (message.startsWith("GET user")) {
 			response = responseUser(message);
 		} else if (message.startsWith("CONNECT ")) {
+			System.out.println("SALUIT");
 			response = responseToConnexion(message);
 		} else {
 			response = "Message reçu : " + message ;	

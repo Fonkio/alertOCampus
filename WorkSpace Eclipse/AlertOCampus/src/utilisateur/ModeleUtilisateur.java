@@ -1,14 +1,39 @@
 package utilisateur;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModeleUtilisateur {
+public class ModeleUtilisateur implements Serializable {
+	
 	private Utilisateur currentUser;
-
-	public ModeleUtilisateur(String user, String passworld) {
-		//Pour tester
-		currentUser = new Utilisateur(1, "FABRE", "Maxime");
+	private static final int PORT = 8952;
+	Socket socket;
+	PrintWriter output;
+	Client c = new Client();
+	
+	public ModeleUtilisateur(String user, String password) {
+		//currentUser = new Utilisateur(1, "FABRE", "Maxime"); //Ligne pour test
+		if (user.equals("") || password.equals("")) {
+			System.out.println("CHAMP VIDE");
+		} else {
+			c.sendMessage("CONNECT "+user+ " "+ password);
+			String userString;
+			do {
+				userString = c.getResponse();
+				userString = c.getResponse();
+			} while (userString == null);
+			System.out.println(userString);
+		}
+				
 	}
 
 	public void setCurrentUser(Utilisateur currentUser) {
@@ -19,9 +44,19 @@ public class ModeleUtilisateur {
 		return currentUser;
 	}
 
-	public void reconnexion(String utilisateur, String motDePasse) {
-		// TODO Auto-generated method stub
-		
+	public void reconnexion(String user, String password) {
+		if (user.equals("") || password.equals("")) {
+			System.out.println("CHAMP VIDE");
+		} else {
+			c.sendMessage("CONNECT "+user+ " "+ password);
+			String userString;
+			do {
+				userString = c.getResponse();
+				String tuserString = c.getResponse();
+				System.out.println("s");
+			} while (userString == null);
+			System.out.println("s" +userString);
+		}		
 	}
 
 	public List<Groupe> getListeGroupe() {
@@ -53,6 +88,41 @@ public class ModeleUtilisateur {
 	public void envoyerMessage(Message m, Fil f) {
 		m.setIdMessage(j);
 		j++;
+		
+	}
+	
+	
+	public class Client implements Serializable{
+		private static final int PORT = 8952;
+		Socket socket;
+		PrintWriter output;
+		
+		public Client() {
+			try {
+				socket = new Socket(InetAddress.getLocalHost(), PORT);
+				output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+			} catch (IOException e) {
+				e.printStackTrace();	 
+			}
+		}
+		
+		public void sendMessage(String msg){
+			System.out.println("Message sent to server " + msg);
+			output.println(msg);
+		}
+		
+		public String getResponse() {
+			try(BufferedReader plec = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+				String input = plec.readLine();
+				//output.println("OUI" + input);
+				return input;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+		
 		
 	}
 	

@@ -3,27 +3,16 @@ package utilisateur;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.EnumSet;
-import java.util.Hashtable;
-import java.util.List;
 import java.util.NavigableSet;
-import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.processing.Messager;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,14 +21,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.table.TableColumnModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 
-public class VueUtilisateur extends JPanel {
+public class VueUtilisateur extends JPanel implements Serializable {
+	private static final long serialVersionUID = 1L;
 	Client client;
 	ControleurUtilisateur controleur;
 	private JLabel titreFil = new JLabel("Titre");
@@ -136,13 +124,6 @@ public class VueUtilisateur extends JPanel {
 		this.add(westPanel, BorderLayout.WEST);
 		this.add(centerPanel, BorderLayout.CENTER);
 		
-		
-
-		
-		/*TEST */
-		
-	
-		
 	}
 	
 	public void setInfoFil(String titre, String date, String createur, String groupe) {
@@ -218,8 +199,8 @@ public class VueUtilisateur extends JPanel {
 			//RETOURNE ID MDP
 			String[] st = new String[2];
 			st[0] = lf.getText().toString();
-			st[1] = pf.getPassword().toString();
-			System.out.println("[TERMINE ] L'utilisateur valide");
+			st[1] = new String(pf.getPassword());
+			System.out.println("[TERMINE ] L'utilisateur valide ");
 			return st;
 		}
 		System.out.println("[TERMINE ] L'utilisateur annule");

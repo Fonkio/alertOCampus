@@ -1,9 +1,10 @@
 package utilisateur;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-public class Groupe implements Comparable<Groupe> {
+public class Groupe implements Comparable<Groupe>, Serializable{
 	private int idGroupe;
 	private String libelle;
 	private List<Utilisateur> listeUtilisateurs;

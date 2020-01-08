@@ -1,7 +1,9 @@
 
 package utilisateur;
 
-public class Utilisateur implements Comparable<Utilisateur> {
+import java.io.Serializable;
+
+public class Utilisateur implements Comparable<Utilisateur>, Serializable {
 	private int id;
 	private String prenom;
 	private String nom;

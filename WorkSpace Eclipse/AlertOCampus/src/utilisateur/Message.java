@@ -1,12 +1,13 @@
 package utilisateur;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Message implements Comparable<Message> {
+public class Message implements Comparable<Message>, Serializable{
 	private int idMessage;
 	private String texte;
 	private Date dCreation;
