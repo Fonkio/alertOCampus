@@ -1,4 +1,16 @@
 
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,163 +23,147 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.mysql.cj.*;
+public class Serveur implements Runnable {
+	private static final int PORT = 8952;
+	Socket socket;
+	ServerSocket server;
+	DataBaseManager dbmanager;
+	
+	public Serveur(){
+		try {
+			server = new ServerSocket(PORT);
+			dbmanager = new DataBaseManager();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	public void run() {
+		try{
+			while(!server.isClosed()){
+				socket = server.accept();
+				Thread t = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try{
+							BufferedReader plec = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+							PrintWriter output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+							boolean socketOuvert = true;
+							while (socketOuvert) {
+								try{
+									String input = plec.readLine();
+									if(input != null)
+									{
+										output.println(parseMessage(input));
+									}
+								}catch(SocketException se){
+									socketOuvert=false;
+								}
+							}
+							socket.close();
+						} catch (IOException e) {e.printStackTrace();}
+					}
+				});
+				t.start();
+			}
+		}catch (IOException e) {e.printStackTrace();}
+	}
+	
+	/* Récupère l'ensemble des groupes et construit une chaîne réponse au client */
+	private String responseGroups() {
+		StringBuilder sb = new StringBuilder("GET groups response \n");
+		List<Groupe> groups = dbmanager.getGroups(); 
+		for(Groupe group : groups) {
+			sb.append(group.getId() + " " + group.getLibelle() + "\n");
+		}
+		return sb.toString();
+	}
+	
+	/* Récupère les membres du groupe identifié par son id
+	 * La requête doit être de la forme "GET members <id>"
+	 */
+	private String responseMembers(String message) {
+		String[] msgSplit = message.split("\\s+");
+		int id = Integer.parseInt(msgSplit[2]);
+		NavigableSet<Utilisateur> members = dbmanager.getGroupMembers(id);
+		StringBuilder sb = new StringBuilder(message + "\n");
+		for(Utilisateur user : members) {
+			sb.append(user.getId() + " " + user.getNom() + " " + user.getPrenom() +  "\n");
+		}
+		return sb.toString();
+	}
+	
+	/*
+	 * Envoie les informations relatives à l'utilisateur demandé
+	 * Requête de la forme : "GET user with login <login>" OU
+	 *  "GET user with id <id>"
+	 *  Retourne la réponse sous la forme 
+	 *  "<requête>
+	 *  <id> <nom> <prénom>"
+	 */
+	private String responseUser(String message) {
+		StringBuilder sb = new StringBuilder(message + "\n");
+		// Décomposer la requête
+		String[] msgSplit = message.split("\\s+");
+		// Savoir si on filtre par id ou par login de l'utilisateur
+		String filtrage = msgSplit[3];
+		if (filtrage.equals("id")) {
+			int id = Integer.parseInt(msgSplit[4]);
+			NavigableSet<Utilisateur> members = dbmanager.getGroupMembers(id);
+			for(Utilisateur user : members) {
+				sb.append(user.getId() + " " + user.getNom() + " " + user.getPrenom() +  "\n");
+			}
+		} else if (filtrage.equals("login")) {
+			String login = msgSplit[4];
+			Utilisateur user = dbmanager.getUser(login);
+			sb.append(user.getId() + " " + user.getNom() + " " + user.getPrenom() +  "\n");
+		}
+		return sb.toString();
+	}
+	
+	/* Répond au client sur la validité des identifiants de l'utilisateur 
+	 * Requête de la forme "CONNECT <login> <mdp>"
+	 * Réponse de la forme 
+	 * " <requête>
+	 * OK " Si la connexion est autorisée
+	 * " <requête>
+	 * NOT OK" Sinon
+	 */
+	private String responseToConnexion(String message) {
+		StringBuilder sb = new StringBuilder(message + "\n");
+		String[] msgSplit = message.split("\\s+");
+		String login = msgSplit[1];
+		String password = msgSplit[2];
+		if (dbmanager.isPasswordValid(login, password)) {
+			sb.append("Ok");
+		} else {
+			sb.append("NOT OK");
+		}
+		return sb.toString();
+	}
 
-
-public class Serveur {
-	
-	public Connection connectToDatabase() throws SQLException {
-		return DriverManager.getConnection(
-					"jdbc:mysql://localhost/alertocampus"
-					+ "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
-					"root",
-					"");
+	/* Construit une réponse adaptées à chaque cas de message que le client peut envoyer */
+	private String parseMessage(String message) {
+		String response = null;
+		if (message.startsWith("GET members")) {
+			response = responseMembers(message);
+		} else if (message.startsWith("GET user")) {
+			response = responseUser(message);
+		} else if (message.startsWith("CONNECT ")) {
+			response = responseToConnexion(message);
+		} else {
+			response = "Message reçu : " + message ;	
+		}
+		System.out.println(response);
+		return response;
 	}
 	
-	public List<Utilisateur> getUsers() {
-		List<Utilisateur> users = new ArrayList<>();
-		try {
-			Connection con = this.connectToDatabase();
-			Statement stmt =  con.createStatement();
-			ResultSet rst = stmt.executeQuery("SELECT Id_Utilisateur, Nom, Prenom FROM utilisateur");
-			while(rst.next()) {
-				String nom = rst.getString("Nom");
-				String prenom = rst.getString("Prenom");
-				int id = rst.getInt("Id_Utilisateur");
-				Utilisateur currentuser = new Utilisateur(id, prenom, nom);
-				users.add(currentuser);
-			}	
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}	
-		return users;
+	public static void main(String[] args){
+		Serveur s = new Serveur();
+		Thread t = new Thread(s);
+		t.start();
+		s.run();
 	}
-	
-	public Utilisateur getUser(int id) {
-		Utilisateur user = null;
-		try {
-			Connection con = this.connectToDatabase();
-			PreparedStatement stmt =  con.prepareStatement("SELECT Id_Utilisateur, Prenom, Nom FROM Utilisateur"
-					+ " WHERE Id_Utilisateur = ?");
-			stmt.setInt(1, id);
-			ResultSet rst = stmt.executeQuery();
-			while(rst.next()) {
-				int idUser = rst.getInt("Id_Utilisateur");
-				String nom = rst.getString("Nom");
-				String prenom = rst.getString("Prenom");
-				user = new Utilisateur(idUser, prenom, nom);
-			}	
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}	
-		return user;
-	}
-	
-	
-	//Récupérer les membres d'un groupes triés dans l'ordre alphabétique
-	public NavigableSet<Utilisateur> getGroupMembers(int id) {
-		NavigableSet<Utilisateur> members = new TreeSet<>();
-		try {
-			Connection con = this.connectToDatabase();
-			PreparedStatement stmt = con.prepareStatement("SELECT Id_Utilisateur FROM appartenir WHERE Id_Groupe = ?");
-			stmt.setInt(1, id);	
-			ResultSet rst = stmt.executeQuery();
-			while(rst.next()) {
-				int idUser = rst.getInt("Id_Utilisateur");
-				Utilisateur currentUser = this.getUser(idUser);
-				members.add(currentUser);
-			}	
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}	
-		return members;
-	}
-	
-	public List<Groupe> getGroups() {
-		List<Groupe> groups = new ArrayList<>();
-		try {
-			Connection con = this.connectToDatabase();
-			Statement stmt =  con.createStatement();
-			ResultSet rst = stmt.executeQuery("SELECT Id_Groupe, Libelle from Groupe");
-			while(rst.next()) {
-				int id = rst.getInt("Id_Groupe");
-				String libelle = rst.getString("Libelle");
-				Groupe currentgroup = new Groupe(id, libelle, getGroupMembers(id));
-				groups.add(currentgroup);
-			}	
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}	
-		return groups;
-	}
-	
-	public void removeUserFromGroup(Utilisateur user, Groupe group) {
-		try {
-			Connection con = this.connectToDatabase();
-			PreparedStatement stmt =  con.prepareStatement("DELETE FROM appartenir WHERE Id_Utilisateur = ? AND Id_Groupe = ?");
-			stmt.setInt(1, user.getId());
-			stmt.setInt(2, group.getId());
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}	
-	}
-	
-	public void addUserToGroup(Utilisateur user, Groupe group) {
-		try {
-			Connection con = this.connectToDatabase();
-			PreparedStatement stmt =  con.prepareStatement("INSERT INTO appartenir VALUES ( ? , ? )");
-			stmt.setInt(1, user.getId());
-			stmt.setInt(2, group.getId());
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}	
-	}
-	
-	public void deleteUser(Utilisateur user) {
-		try {
-			Connection con = this.connectToDatabase();
-			PreparedStatement stmt =  con.prepareStatement("DELETE FROM Utilisateur WHERE Id_Utilisateur = ?");
-			stmt.setInt(1, user.getId());
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}	
-	}
-	
-	public void addUser(String nom, String prenom) {
-		try {
-			Connection con = this.connectToDatabase();
-			PreparedStatement stmt =  con.prepareStatement("INSERT INTO utilisateur(Nom, Prenom)  VALUES (? , ?)");
-			stmt.setString(1, nom);
-			stmt.setString(1, prenom);
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}	
-	}
-	
-	public void deleteGroup(Groupe group) {
-		try {
-			Connection con = this.connectToDatabase();
-			PreparedStatement stmt =  con.prepareStatement("DELETE FROM Groupe WHERE Id_Groupe = ?");
-			stmt.setInt(1, group.getId());
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}	
-	}
-	
-	public void addGroup (String libelle) {
-		try {
-			Connection con = this.connectToDatabase();
-			PreparedStatement stmt =  con.prepareStatement("INSERT INTO Groupe(Libelle)  VALUES (?)");
-			stmt.setString(1, libelle);
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}	
-	}
-	
 }

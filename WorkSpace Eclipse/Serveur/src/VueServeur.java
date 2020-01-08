@@ -1,11 +1,15 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.io.Serializable;
+import java.util.List;
+import java.util.TreeSet;
 
 import javax.sound.sampled.BooleanControl;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -19,17 +23,95 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 
-public class VueServeur extends JTabbedPane{
+public class VueServeur extends JTabbedPane implements Serializable{
 	
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 5827384626815819750L;
+	private static final int NB_TABS = 2; // Index 0 = Groupe et Index 1 = Utilisateur
+	private ControleurServeur controleur;
+	
+	private DefaultListModel<Groupe> listeGroupes; //Liste du panneau de gauche pour l'onglet Groupes
+	private DefaultListModel<Utilisateur> listeMembresDeGroupe; //Liste du panneau de droite pour l'onglet Groupes
+	private DefaultListModel<Utilisateur> listeUsers; //Liste du panneau de gauche pour l'onglet Utilisateurs
+	private DefaultListModel<Groupe> listeGroupesDeMembre; //Liste du panneau de droite pour l'onglet Utilisateurs
+	
+	private JList<Utilisateur> listeGaucheUsers;
+	private JList<Groupe> listeGaucheGroups;
+	private JList<Groupe> listeDroiteUsers;
+	private JList<Utilisateur> listeDroiteGroups;
+	
+	//private 
+	private JTextField nomGroupeTF;
+	private JTextField nomUserTF;
+	private JTextField prenomUserTF;
+	private JButton[] addBtn = new JButton[NB_TABS];
+	
 	public VueServeur () {
 		this.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+		listeGroupes = new DefaultListModel<>();
+		listeUsers = new DefaultListModel<>();
+		listeMembresDeGroupe = new DefaultListModel<>();
+		listeGroupesDeMembre = new DefaultListModel<>();
 		this.constructGroupPane();
 		this.constructUserPane();
+		this.controleur = new ControleurServeur(this);
+		this.addListeners();
+		
 	}
 	
+	public void addUser(Utilisateur user) {
+		listeUsers.addElement(user);
+	}
+	
+	public void addGroup(Groupe group) {
+		listeGroupes.addElement(group);
+	}
+	
+	public void addMemberOfGroup(Utilisateur user) {
+		listeMembresDeGroupe.addElement(user);
+	}
+	
+	public void addGroupOfMember(Groupe group) {
+		listeGroupesDeMembre.addElement(group);
+	}
+	
+	public void resetMemberOfGroupList() {
+		listeMembresDeGroupe.clear();
+	}
+	
+	public void resetGroupOfMemberList() {
+		listeGroupesDeMembre.clear();
+	}
+	
+	
+	public void setNomGroupeTF(String newName) {
+		this.nomGroupeTF.setText(newName);
+	}
+
+	public void setNomUserTF(String newName) {
+		this.nomUserTF.setText(newName);
+	}
+
+	public void setPrenomUserTF(String newName) {
+		this.prenomUserTF.setText(newName);
+	}
+
+	private void addListeners() {
+		// Ecouteur pour changement d'état du controleur quand on change d'onglet 
+		this.addChangeListener(this.controleur);
+		
+		// Ecouter sur les boutons d'ajout
+		for (int i = 0; i < NB_TABS; i++) {
+			this.addBtn[i].addActionListener(controleur);
+		}
+		
+		// Ecoute les listes de gauche de chaque onglet (en sélectionnant)
+		listeGaucheUsers.addListSelectionListener(controleur);
+		listeGaucheGroups.addListSelectionListener(controleur);
+		//listeDroiteGroups.addListSelectionListener(controleur);
+		//listeDroiteUsers.addListSelectionListener(controleur);
+	}
 	private void constructUserPane() {
 		JSplitPane panel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		panel.setDividerLocation(400);
@@ -41,14 +123,16 @@ public class VueServeur extends JTabbedPane{
 		JLabel labelPanel = new JLabel("Liste des utilisateurs");
 
 		// Liste des groupes existants
-		JScrollPane listScroll = new JScrollPane(new JList<String>());
-		
+		listeGaucheUsers = new JList<>(listeUsers);
+		JScrollPane listScroll = new JScrollPane(listeGaucheUsers);
+
+
 		// Boutons supprimer et ajouter en bas de la liste de groupes
 		JPanel buttonsPanel = new JPanel();
 		buttonsPanel.setLayout(new FlowLayout());
-		JButton buttonAdd = new JButton("Supprimer");
-		JButton buttonDelete = new JButton("Nouvel utilisateur");
-		buttonsPanel.add(buttonAdd);
+		this.addBtn[1] = new JButton("Nouvel utilisateur");
+		JButton buttonDelete = new JButton("Supprimer");
+		buttonsPanel.add(this.addBtn[1]);
 		buttonsPanel.add(buttonDelete);
 		
 		// Ajout des éléments à la partie gauche
@@ -68,22 +152,23 @@ public class VueServeur extends JTabbedPane{
 		// Création des éléments de la partie droite
 		// Champ de saisie du nom
 		JLabel nomLabel = new JLabel("Nom");
-		JTextField nomTF = new JTextField();
-		nomTF.setMaximumSize(new Dimension(Integer.MAX_VALUE, nomTF.getPreferredSize().height));
+		this.nomUserTF= new JTextField();
+		this.nomUserTF.setMaximumSize(new Dimension(Integer.MAX_VALUE, this.nomUserTF.getPreferredSize().height));
 		
 		// Champ de saisie du prénom
 		JLabel prenomLabel = new JLabel("Prénom");
-		JTextField prenomTF = new JTextField();
-		nomTF.setMaximumSize(new Dimension(Integer.MAX_VALUE, nomTF.getPreferredSize().height));
+		this.prenomUserTF = new JTextField();
+		this.prenomUserTF.setMaximumSize(new Dimension(Integer.MAX_VALUE, this.prenomUserTF.getPreferredSize().height));
 		
 		// Sélection de groupes
 		JLabel ajoutLabel = new JLabel("Ajouter l'utilisateur à un groupe");
 		JComboBox<String> ajoutGroupeCB = new JComboBox<>();
-		ajoutGroupeCB.setMaximumSize(new Dimension(Integer.MAX_VALUE, nomTF.getPreferredSize().height));
+		ajoutGroupeCB.setMaximumSize(new Dimension(Integer.MAX_VALUE, this.nomUserTF.getPreferredSize().height));
 		
 		// Liste des groupes auxquels appartient le membre sélectionné
 		JLabel labelListeMembresGroupes = new JLabel("Liste des groupes");
-		JScrollPane listeMembresScroll = new JScrollPane(new JList<String>());
+		this.listeDroiteUsers = new JList<>(this.listeGroupesDeMembre);
+		JScrollPane listeMembresScroll = new JScrollPane(listeDroiteUsers);
 		JButton supprimerDuGroupeBtn = new JButton("Supprimer du groupe");
 		
 		// Bouton pour sauvegarder les modifications
@@ -98,10 +183,10 @@ public class VueServeur extends JTabbedPane{
 		GroupLayout.SequentialGroup vGroup = grouplayout.createSequentialGroup();
 		vGroup.addGroup(grouplayout.createParallelGroup(Alignment.BASELINE)
 		.addComponent(nomLabel)
-		.addComponent(nomTF));
+		.addComponent(this.nomUserTF));
 		vGroup.addGroup(grouplayout.createParallelGroup(Alignment.BASELINE)
 		.addComponent(prenomLabel)
-		.addComponent(prenomTF));	
+		.addComponent(this.prenomUserTF));	
 		grouplayout.setVerticalGroup(vGroup);
 		
 		GroupLayout.SequentialGroup hGroup = grouplayout.createSequentialGroup();
@@ -109,8 +194,8 @@ public class VueServeur extends JTabbedPane{
 				.addComponent(nomLabel)
 				.addComponent(prenomLabel));
 		hGroup.addGroup(grouplayout.createParallelGroup()
-				.addComponent(nomTF)
-				.addComponent(prenomTF));
+				.addComponent(this.nomUserTF)
+				.addComponent(this.prenomUserTF));
 		grouplayout.setHorizontalGroup(hGroup);
 		
 		// Liste des membres du groupe sélectionné
@@ -155,14 +240,17 @@ public class VueServeur extends JTabbedPane{
 	JLabel labelPanel = new JLabel("Liste des groupes");
 
 	// Liste des groupes existants
-	JScrollPane listScroll = new JScrollPane(new JList<String>());
+	listeGaucheGroups = new JList<>(listeGroupes);
+	JScrollPane listScroll = new JScrollPane(listeGaucheGroups);
+	
+
 	
 	// Boutons supprimer et ajouter en bas de la liste de groupes
 	JPanel buttonsPanel = new JPanel();
 	buttonsPanel.setLayout(new FlowLayout());
-	JButton buttonAdd = new JButton("Supprimer");
-	JButton buttonDelete = new JButton("Nouveau groupe");
-	buttonsPanel.add(buttonAdd);
+	this.addBtn[0]= new JButton("Nouveau groupe");
+	JButton buttonDelete = new JButton("Supprimer");
+	buttonsPanel.add(this.addBtn[0]);
 	buttonsPanel.add(buttonDelete);
 	
 	// Création de la partie gauche et ajout au panneau de groupes principal
@@ -182,13 +270,14 @@ public class VueServeur extends JTabbedPane{
 	// Création des éléments de la partie droite
 	// Champ de saisie du nom
 	JLabel nomLabel = new JLabel("Nom du groupe");
-	JTextField nomTF = new JTextField();
-	nomTF.setMaximumSize(new Dimension(Integer.MAX_VALUE, nomTF.getPreferredSize().height));
+	this.nomGroupeTF = new JTextField();
+	this.nomGroupeTF.setMaximumSize(new Dimension(Integer.MAX_VALUE, this.nomGroupeTF.getPreferredSize().height));
 	
 	
 	// Liste des membres du groupe sélectionné
 	JLabel labelListeMembresGroupes = new JLabel("Liste des membres");
-	JScrollPane listeMembresScroll = new JScrollPane(new JList<String>());
+	listeDroiteGroups = new JList<>(listeMembresDeGroupe);
+	JScrollPane listeMembresScroll = new JScrollPane(listeDroiteGroups);
 	JButton supprimerDuGroupeBtn = new JButton("Supprimer du groupe");
 	
 	// Bouton pour sauvegarder les modifications
@@ -198,7 +287,7 @@ public class VueServeur extends JTabbedPane{
 	// Champ de saisie du nom
 	Box box1 = new Box(BoxLayout.PAGE_AXIS);
 	box1.add(nomLabel);
-	box1.add(nomTF);
+	box1.add(this.nomGroupeTF);
 	box1.add(Box.createVerticalGlue());
 	
 	// Liste des membres du groupe sélectionné

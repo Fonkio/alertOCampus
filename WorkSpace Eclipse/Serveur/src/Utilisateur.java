@@ -46,7 +46,7 @@ public class Utilisateur implements Comparable<Utilisateur> {
 
 	@Override
 	public String toString() {
-		return "Utilisateur [id=" + id + ", prenom=" + prenom + ", nom=" + nom + "]";
+		return this.nom + " " + this.prenom;
 	}
 
 	@Override

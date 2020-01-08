@@ -1,11 +1,12 @@
 import java.util.HashSet;
+import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class Groupe {
+public class Groupe implements Comparable<Groupe>{
 	private int id;
 	private String libelle;
-	private Set<Utilisateur> membres;
+	private NavigableSet<Utilisateur> membres;
 	
 	public Groupe(int id, String libelle, Set<Utilisateur> membres) {
 		this.id = id;
@@ -42,19 +43,28 @@ public class Groupe {
 	public boolean equals(Object o) {
 		if (o instanceof Groupe) {
 			Groupe groupToCompare = (Groupe) o;
-			return groupToCompare.id == id;
+			return this.libelle.equals(groupToCompare.libelle) && this.id == groupToCompare.id;
 		}
 		return false;
 	}
 	
 	@Override
 	public int hashCode() {
-		return 31 * id;
+		return 31 * (id + libelle.hashCode());
 	}
 
 	@Override
 	public String toString() {
-		return "Groupe [id=" + id + ", libelle=" + libelle + ", membres=" + membres + "]";
+		return this.libelle;
+	}
+
+	@Override
+	public int compareTo(Groupe o) {
+		int comparaison = this.libelle.compareTo(o.libelle);
+		if (comparaison == 0) {
+			return ((Integer) this.id).compareTo((Integer) o.id);
+		}
+		return comparaison;
 	}
 	
 	
