@@ -1,4 +1,8 @@
+**** Requêtes de création de base de données et des tables, à éxécuter sans sélectionner de bases de données :
 
+CREATE DATABASE alertocampus;
+
+USE alertocampus;
 
 CREATE TABLE Utilisateur(
    Id_Utilisateur INT AUTO_INCREMENT,
@@ -32,7 +36,7 @@ CREATE TABLE Message(
    Id_Fil_de_discussion INT NOT NULL,
    Id_Utilisateur INT NOT NULL,
    PRIMARY KEY(Id_Message),
-   FOREIGN KEY(Id_Fil_de_discussion) REFERENCES Fil_de_discussion(Id_Fil_de_discussion)
+   FOREIGN KEY(Id_Fil_de_discussion) REFERENCES Fil_de_discussion(Id_Fil_de_discussion),
    FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id_Utilisateur)
 );
 
@@ -53,7 +57,7 @@ CREATE TABLE Status(
    FOREIGN KEY(Id_Message) REFERENCES Message(Id_Message)
 );
 
-Set de données de base :
+***** Requêtes de création d'un set de données de base :
 
 INSERT INTO utilisateur(login, motDePasse, Nom, Prenom)  VALUES ('djn', 'pinpix', 'Doe', 'John');
 
@@ -63,7 +67,7 @@ INSERT INTO utilisateur(login, motDePasse, Nom, Prenom) VALUES ('lhn', '$iutinfo
 
 INSERT INTO utilisateur(login, motDePasse, Nom, Prenom)  VALUES ('fbm', '$iutinfo', 'Fabre', 'Maxime');
 
-INSERT INTO utilisateur (login, motDePasse, Nom, Prenom) VALUES ('slm', 'slm', 'pinpix', 'SALVAGNAC', 'Maxime');
+INSERT INTO utilisateur (login, motDePasse, Nom, Prenom) VALUES ('slm', 'pinpix', 'SALVAGNAC', 'Maxime');
 
 INSERT INTO groupe(Libelle) VALUES ('TDA3');
 
@@ -76,3 +80,4 @@ INSERT INTO appartenir VALUES (2, 2);
 INSERT INTO appartenir VALUES (3, 1);
 
 INSERT INTO appartenir VALUES (4, 1);
+
