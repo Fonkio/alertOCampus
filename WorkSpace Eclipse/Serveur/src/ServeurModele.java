@@ -14,6 +14,7 @@ import java.util.TreeSet;
 
 public class ServeurModele {
 	
+	
 	public Connection connectToDatabase() throws SQLException {
 		return DriverManager.getConnection(
 					"jdbc:mysql://localhost/alertocampus"
@@ -88,7 +89,7 @@ public class ServeurModele {
 	
 	public void updateUser(Utilisateur user) {
 		try (Connection con = this.connectToDatabase();
-				PreparedStatement stmt =  con.prepareStatement("UPDATE utilisateur SET Nom = ? , Prenom = ? , login = ? , mdp = ? WHERE Id_Utilisateur = ?")){
+				PreparedStatement stmt =  con.prepareStatement("UPDATE utilisateur SET Nom = ? , Prenom = ? , login = ? , motDePasse = ? WHERE Id_Utilisateur = ?")){
 				stmt.setString(1, user.getNom());
 				stmt.setString(2, user.getPrenom());
 				stmt.setString(3, user.getLogin());

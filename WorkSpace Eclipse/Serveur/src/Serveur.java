@@ -245,6 +245,16 @@ public class Serveur implements Runnable {
 	}
 
 
+	
+	public void close() {
+		try {
+			this.socket.close();
+			this.server.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
 	public static void main(String[] args){
 		Serveur s = new Serveur();
 		Thread t = new Thread(s);
