@@ -82,11 +82,12 @@ public class ServeurModele {
 		return members;
 	}
 	
-	public void updateUser(String nom, String prenom) {
+	public void updateUser(Utilisateur user) {
 		try (Connection con = this.connectToDatabase();
-				PreparedStatement stmt =  con.prepareStatement("UPDATE utilisateur SET Nom = ? , Prenom = ?")){
-				stmt.setString(1, nom);
-				stmt.setString(1, prenom);
+				PreparedStatement stmt =  con.prepareStatement("UPDATE utilisateur SET Nom = ? , Prenom = ? WHERE Id_Utilisateur = ?")){
+				stmt.setString(1, user.getNom());
+				stmt.setString(2, user.getPrenom());
+				stmt.setInt(3, user.getId());
 				stmt.executeUpdate();
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -196,9 +197,9 @@ public class ServeurModele {
 	public Utilisateur addUser(String nom, String prenom) {
 		Utilisateur user = null;
 		try (Connection con = this.connectToDatabase();
-			PreparedStatement stmt =  con.prepareStatement("INSERT INTO utilisateur(Nom, Prenom)  VALUES (? , ?)");){
+			PreparedStatement stmt =  con.prepareStatement("INSERT INTO utilisateur(Nom, Prenom)  VALUES (? , ?)", Statement.RETURN_GENERATED_KEYS);){
 			stmt.setString(1, nom);
-			stmt.setString(1, prenom);
+			stmt.setString(2, prenom);
 			stmt.executeUpdate();
 			try(ResultSet rs = stmt.getGeneratedKeys()) {
 				rs.last();
@@ -224,7 +225,7 @@ public class ServeurModele {
 	public Groupe addGroup (String libelle) {
 		Groupe group = null;
 		try (Connection con = this.connectToDatabase();
-			PreparedStatement stmt =  con.prepareStatement("INSERT INTO Groupe(Libelle)  VALUES (?)");){
+			PreparedStatement stmt =  con.prepareStatement("INSERT INTO Groupe(Libelle)  VALUES (?)", Statement.RETURN_GENERATED_KEYS);){
 			stmt.setString(1, libelle);
 			stmt.executeUpdate();
 			try(ResultSet rs = stmt.getGeneratedKeys()) {

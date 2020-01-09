@@ -49,7 +49,7 @@ public class VueServeur extends JTabbedPane implements Serializable{
 	protected JTextField nomGroupeTF;
 	protected JTextField nomUserTF;
 	protected JTextField prenomUserTF;
-	private JButton[] addBtn = new JButton[NB_TABS];
+	protected JButton[] addBtn = new JButton[NB_TABS];
 	private JButton[] deleteBtn = new JButton[NB_TABS];
 	private JButton[] deleteUserFromGroupBtn = new JButton[NB_TABS];
 	private JButton[] saveBtn = new JButton[NB_TABS];
@@ -66,6 +66,18 @@ public class VueServeur extends JTabbedPane implements Serializable{
 		this.controleur = new ControleurServeur(this);
 		this.addListeners();
 		
+	}
+	
+	public void disableFormUserBtn() {
+		this.addBtn[1].setEnabled(false);
+		this.deleteUserFromGroupBtn[1].setEnabled(false);
+		this.ajoutGroupeCB.setEnabled(false);
+	}
+	
+	public void enableFormUserBtn() {
+		this.addBtn[1].setEnabled(true);
+		this.deleteUserFromGroupBtn[1].setEnabled(true);
+		this.ajoutGroupeCB.setEnabled(true);
 	}
 	
 	public void addUser(Utilisateur user) {
@@ -140,6 +152,11 @@ public class VueServeur extends JTabbedPane implements Serializable{
 				this.ajoutGroupeCB.setEnabled(false);
 				this.ajoutUtilisateurGroupeOKBtn.setEnabled(false);
 				this.listeGaucheUsers.clearSelection();
+				this.nomUserTF.setText("");
+				this.nomUserTF.setEditable(false);
+				this.prenomUserTF.setText("");
+				this.prenomUserTF.setEditable(false);
+				this.deleteUserFromGroupBtn[1].setEnabled(false);
 		}
 	}
 	
@@ -152,11 +169,14 @@ public class VueServeur extends JTabbedPane implements Serializable{
 				this.saveBtn[1].setEnabled(true);
 				this.ajoutGroupeCB.setEnabled(true);
 				this.ajoutUtilisateurGroupeOKBtn.setEnabled(true);
+				this.nomUserTF.setEditable(true);
+				this.prenomUserTF.setEditable(true);
+				this.deleteUserFromGroupBtn[1].setEnabled(true);
 		}
 	}
 	
 	public boolean areUserTFEmpty() {
-		return this.nomGroupeTF.getText().isEmpty() || this.prenomUserTF.getText().isEmpty();
+		return this.nomUserTF.getText().isEmpty() || this.prenomUserTF.getText().isEmpty();
 	}
 	
 	private void addListeners() {
