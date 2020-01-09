@@ -111,10 +111,9 @@ public class Serveur implements Runnable {
 		String filtrage = msgSplit[3];
 		if (filtrage.equals("id")) {
 			int id = Integer.parseInt(msgSplit[4]);
-			NavigableSet<Utilisateur> members = dbmanager.getGroupMembers(id);
-			for(Utilisateur user : members) {
-				sb.append("\n"+user.getId() + " " + user.getNom() + " " + user.getPrenom());
-			}
+			Utilisateur user = dbmanager.getUser(id);
+			sb.append("\n"+user.getId() + " " + user.getNom() + " " + user.getPrenom());
+			
 		} else if (filtrage.equals("login")) {
 			String login = msgSplit[4];
 			Utilisateur user = dbmanager.getUser(login);
@@ -160,6 +159,12 @@ public class Serveur implements Runnable {
 			response = reponseNewFil(message);
 		} else if (message.startsWith("NEW message")) {
 			response = reponseNewMessage(message);
+		} else if (message.startsWith("GET filsmessages")) {
+			response = reponseGetFilMessage(message);
+		} else if (message.startsWith("GET status")) {
+			response = reponseGetStatus(message);
+		} else if (message.startsWith("LIRE")) {
+			response = reponseLireStatus(message);
 		}
 		else {
 			response = "Message reçu : " + message ;	
@@ -169,6 +174,38 @@ public class Serveur implements Runnable {
 		return response;
 	}
 	
+	private String reponseGetFilMessage(String message) {
+		System.out.println(message);
+		StringBuilder sb = new StringBuilder(message);
+		String[] msgSplit = message.split("\\s+");
+		List<String> lm = new ArrayList<String>(dbmanager.getFilMessage(Integer.parseInt(msgSplit[2])));
+		for(String s : lm) {
+			sb.append("\n"+s);
+		}
+		
+		return sb.toString();
+	}
+
+	private String reponseGetStatus(String message) {
+		System.out.println(message);
+		StringBuilder sb = new StringBuilder(message);
+		String[] msgSplit = message.split("\\s+");
+		String status = dbmanager.getStatus(Integer.parseInt(msgSplit[2]), Integer.parseInt(msgSplit[3]));
+		sb.append("\n"+status);
+		
+		return sb.toString();
+	}
+	
+	private String reponseLireStatus(String message) {
+		System.out.println(message);
+		StringBuilder sb = new StringBuilder(message);
+		String[] msgSplit = message.split("\\s+");
+		dbmanager.LireStatus(Integer.parseInt(msgSplit[1]), Integer.parseInt(msgSplit[2]));
+		sb.append("\n"+"Ok");
+		
+		return sb.toString();
+	}
+
 	private String reponseNewFil(String message) {
 		StringBuilder sb = new StringBuilder(message);
 		String[] msgSplit = message.split("\\s+");

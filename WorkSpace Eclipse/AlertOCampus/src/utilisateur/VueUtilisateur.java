@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.nio.file.CopyOption;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
@@ -42,6 +43,8 @@ public class VueUtilisateur extends JPanel implements Serializable {
 	private JTree arbreTickets = new JTree(racine) ;
 	private NavigableSet<Groupe> listeGroupes = new TreeSet<Groupe>();
 	private NavigableSet<Fil> listeFils = new TreeSet<Fil>(new CompFils());
+	
+
 	private Fil selectedFil;
 
 	public VueUtilisateur() {
@@ -143,15 +146,25 @@ public class VueUtilisateur extends JPanel implements Serializable {
 		System.out.println("[TERMINE ] Mise a jour du tableau message");
 	}
 	
+	public void updateFilOrder(Fil f) {
+		for(Iterator<Fil> it = listeFils.iterator(); it.hasNext();) {
+			Fil fl = it.next();
+			if (fl.getIdFil() == f.getIdFil()) {
+				it.remove();
+			}
+		}
+		listeFils.add(f);
+	}
+	
 	public void updateArbre() {
 		System.out.println("[EN COURS] Mise a jour de l'arbre");
 		//RAZ DE L'ARBRE
 		racine.removeAllChildren();
 		//RECLASSEMENT DES FILS
+		System.out.println(listeFils.toString());
 		if(selectedFil != null) {
 			System.out.println("a"+listeFils.toString());
-			listeFils.remove(selectedFil);
-			listeFils.add(selectedFil);
+			updateFilOrder(selectedFil);
 			System.out.println("b"+listeFils.toString());
 		}
 		//PARCOURS DES GROUPES
@@ -177,8 +190,16 @@ public class VueUtilisateur extends JPanel implements Serializable {
 		System.out.println("[TERMINE ] Mise a jour de l'arbre");
 	}
 
-
-
+	public void statusUpdate() {
+		if (selectedFil != null) {
+			for (Message m : selectedFil.getMessages()) {
+				for (Utilisateur u : m.getEtatDestinataire().keySet()) {
+					controleur.getModeleUtilisateur().setStatus(m, u);
+				}
+			}
+			modeleTableau.fireTableDataChanged();
+		}
+	}
 	public String[] auth() {
 		System.out.println("[EN COURS] Pop-up d'authentification");
 		//CREATION POPUP
@@ -312,11 +333,29 @@ public class VueUtilisateur extends JPanel implements Serializable {
 	}
 	
 	public class CompFils implements Comparator<Fil>, Serializable {
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public int compare(Fil o1, Fil o2) {
+			if(o1.getMessages().isEmpty()) {
+				if (o2.getMessages().isEmpty()) {
+					return 0;
+				} else {
+					return 1;
+				}
+			} 
+			if (o2.getMessages().isEmpty()) {
+				return -1;
+			}
 			return o2.getMessages().first().getdCreation().compareTo(o1.getMessages().first().getdCreation());
 		}
+	}
+	public NavigableSet<Fil> getListeFils() {
+		return listeFils;
+	}
+	
+	public NavigableSet<Groupe> getListeGroupes() {
+		return listeGroupes;
 	}
 
 	

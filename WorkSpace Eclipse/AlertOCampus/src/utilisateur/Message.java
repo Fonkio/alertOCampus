@@ -16,6 +16,10 @@ public class Message implements Comparable<Message>, Serializable{
 	private Map<Utilisateur, Status> etatDestinataire = new HashMap<Utilisateur, Status>();
 	private boolean send = false;
 	
+	public void setSend(boolean send) {
+		this.send = send;
+	}
+
 	public Message(int idMessage, String texte, Date dCreation, Utilisateur expediteur, List<Utilisateur> destinataires) {
 		this.idMessage = idMessage;
 		this.texte = texte;
@@ -24,6 +28,7 @@ public class Message implements Comparable<Message>, Serializable{
 		for(Utilisateur u : destinataires) {
 			etatDestinataire.put(u, Status.EN_ATTENTE);
 		}
+		etatDestinataire.put(expediteur, Status.EN_ATTENTE);
 	}
 	
 	public void setIdMessage(int idMessage) {
