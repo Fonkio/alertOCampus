@@ -1,11 +1,13 @@
 
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NavigableSet;
@@ -57,6 +59,24 @@ public class DataBaseManager {
 			e.printStackTrace();
 		}	
 		return members;
+	}
+	
+	//Nouveau fil
+	public int newFil(String titre, int idUtilisateur, int idGroupe) {
+		try (Connection con = this.connectToDatabase();
+			PreparedStatement stmt = con.prepareStatement("INSERT INTO fil_de_discussion (Titre, Id_Utilisateur, Id_Groupe)"
+					+ " VALUES (?, ?, ?)",Statement.RETURN_GENERATED_KEYS);){
+			stmt.setString(1, titre);
+			stmt.setInt(2, idUtilisateur);
+			stmt.setInt(3, idGroupe);
+			stmt.executeUpdate();
+			ResultSet rs = stmt.getGeneratedKeys();
+		    rs.next();
+			return rs.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+		return 0;
 	}
 	
 	/* Récupérer un utilisateur(son nom et son prénom) à partir de l'id
@@ -122,5 +142,35 @@ public class DataBaseManager {
 			e.printStackTrace();
 		}	
 		return isValid;
+	}
+
+	public int newMessage(String text, int idExp, int idFil, Long date) {
+		Date d = new Date(date);
+		SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		System.out.println(sd.format(d));
+		try (Connection con = this.connectToDatabase();
+			PreparedStatement stmt = con.prepareStatement("INSERT INTO message (Texte, dCreation, Id_Fil_de_discussion, Id_Utilisateur)"
+		+ " VALUES (?, \""+sd.format(d)+"\", ?, ?)",Statement.RETURN_GENERATED_KEYS);){
+			stmt.setString(1, text);
+			System.out.println(date);
+			stmt.setInt(2, idFil);
+			stmt.setInt(3, idExp);
+			stmt.executeUpdate();
+			ResultSet rs = stmt.getGeneratedKeys();
+		    rs.next();
+		    int idMessage = rs.getInt(1);
+		  
+		    PreparedStatement stmt2 = con.prepareStatement("INSERT INTO status(Id_Utilisateur, Id_Message, Status) VALUES (?, ?, ?)");
+		    stmt2.setInt(1, idExp);
+		    stmt2.setInt(2, idMessage);
+		    stmt2.setString(3, "LU");
+		    stmt2.executeUpdate();
+		    
+			return idMessage;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+		return 0;
 	}
 }

@@ -73,10 +73,10 @@ public class Serveur implements Runnable {
 	
 	/* Récupère l'ensemble des groupes et construit une chaîne réponse au client */
 	private String responseGroups() {
-		StringBuilder sb = new StringBuilder("GET groups response \n");
+		StringBuilder sb = new StringBuilder("GET groups response");
 		List<Groupe> groups = dbmanager.getGroups(); 
 		for(Groupe group : groups) {
-			sb.append(group.getId() + " " + group.getLibelle() + "\n");
+			sb.append("\n"+group.getId() + " " + group.getLibelle());
 		}
 		return sb.toString();
 	}
@@ -88,9 +88,9 @@ public class Serveur implements Runnable {
 		String[] msgSplit = message.split("\\s+");
 		int id = Integer.parseInt(msgSplit[2]);
 		NavigableSet<Utilisateur> members = dbmanager.getGroupMembers(id);
-		StringBuilder sb = new StringBuilder(message + "\n");
+		StringBuilder sb = new StringBuilder(message);
 		for(Utilisateur user : members) {
-			sb.append(user.getId() + " " + user.getNom() + " " + user.getPrenom() +  "\n");
+			sb.append("\n" + user.getId() + " " + user.getNom() + " " + user.getPrenom());
 		}
 		return sb.toString();
 	}
@@ -104,7 +104,7 @@ public class Serveur implements Runnable {
 	 *  <id> <nom> <prénom>"
 	 */
 	private String responseUser(String message) {
-		StringBuilder sb = new StringBuilder(message + "\n");
+		StringBuilder sb = new StringBuilder(message);
 		// Décomposer la requête
 		String[] msgSplit = message.split("\\s+");
 		// Savoir si on filtre par id ou par login de l'utilisateur
@@ -113,12 +113,12 @@ public class Serveur implements Runnable {
 			int id = Integer.parseInt(msgSplit[4]);
 			NavigableSet<Utilisateur> members = dbmanager.getGroupMembers(id);
 			for(Utilisateur user : members) {
-				sb.append(user.getId() + " " + user.getNom() + " " + user.getPrenom() +  "\n");
+				sb.append("\n"+user.getId() + " " + user.getNom() + " " + user.getPrenom());
 			}
 		} else if (filtrage.equals("login")) {
 			String login = msgSplit[4];
 			Utilisateur user = dbmanager.getUser(login);
-			sb.append(user.getId() + " " + user.getNom() + " " + user.getPrenom() +  "\n");
+			sb.append("\n" + user.getId() + " " + user.getNom() + " " + user.getPrenom());
 		}
 		return sb.toString();
 	}
@@ -132,15 +132,15 @@ public class Serveur implements Runnable {
 	 * NOT OK" Sinon
 	 */
 	private String responseToConnexion(String message) {
-		StringBuilder sb = new StringBuilder(message + "\n");
+		StringBuilder sb = new StringBuilder(message);
 		String[] msgSplit = message.split("\\s+");
 		String login = msgSplit[1];
 		String password = msgSplit[2];
 		if (dbmanager.isPasswordValid(login, password)) {
 			Utilisateur user = dbmanager.getUser(login);
-			sb.append(user.getId() + " " + user.toString());
+			sb.append("\n" + user.getId() + " " + user.toString());
 		} else {
-			sb.append("NOT OK");
+			sb.append("\nNOT OK");
 		}
 		return sb.toString();
 	}
@@ -154,7 +154,14 @@ public class Serveur implements Runnable {
 			response = responseUser(message);
 		} else if (message.startsWith("CONNECT ")) {
 			response = responseToConnexion(message);
-		} else {
+		} else if (message.startsWith("GET groups")) {
+			response = reponseGroups(message);
+		} else if (message.startsWith("NEW fil")) {
+			response = reponseNewFil(message);
+		} else if (message.startsWith("NEW message")) {
+			response = reponseNewMessage(message);
+		}
+		else {
 			response = "Message reçu : " + message ;	
 		}
 		response += "\nEND";
@@ -162,6 +169,45 @@ public class Serveur implements Runnable {
 		return response;
 	}
 	
+	private String reponseNewFil(String message) {
+		StringBuilder sb = new StringBuilder(message);
+		String[] msgSplit = message.split("\\s+");
+		int idFil = dbmanager.newFil(msgSplit[2].replace("£", " "), Integer.parseInt(msgSplit[3]), Integer.parseInt(msgSplit[4]));
+		if (idFil != 0) {
+			sb.append("\n" + idFil );
+		} else {
+			sb.append("\nNOT OK");
+		}
+		return sb.toString();
+	}
+	
+	private String reponseNewMessage(String message) {
+		StringBuilder sb = new StringBuilder(message);
+		String[] msgSplit = message.split("\\s+");
+		int idFil = dbmanager.newMessage(msgSplit[2].replace("£", " "), Integer.parseInt(msgSplit[3]), Integer.parseInt(msgSplit[4]), Long.parseLong(msgSplit[5]));
+		if (idFil != 0) {
+			sb.append("\n" + idFil );
+		} else {
+			sb.append("\nNOT OK");
+		}
+		return sb.toString();
+	}
+
+
+
+	private String reponseGroups(String message) {
+		StringBuilder sb = new StringBuilder(message);
+		
+		NavigableSet<Groupe> lg = new TreeSet<Groupe>(dbmanager.getGroups());
+		for(Groupe g : lg) {
+			System.out.println("h");
+			sb.append("\n" + g.getId() + " " + g.getLibelle());
+		}
+		
+		return sb.toString();
+	}
+
+
 	public static void main(String[] args){
 		Serveur s = new Serveur();
 		Thread t = new Thread(s);

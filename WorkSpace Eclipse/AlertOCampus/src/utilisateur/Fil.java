@@ -8,11 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class Fil implements Serializable{
-	
-	
-
-	
-
+	private static final long serialVersionUID = 1L;
 	private int idFil;
 	private String titre;
 	private NavigableSet<Message> messages = new TreeSet<>();

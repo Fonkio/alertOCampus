@@ -15,6 +15,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 public class ControleurUtilisateur implements Serializable, ActionListener, TreeSelectionListener{
+	private static final long serialVersionUID = 1L;
 	private VueUtilisateur vueUtilisateur;
 	private ModeleUtilisateur modeleUtilisateur;
 

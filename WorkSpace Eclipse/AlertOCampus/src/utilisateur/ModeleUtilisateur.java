@@ -9,31 +9,31 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ModeleUtilisateur implements Serializable {
-	
+	private static final long serialVersionUID = 1L;
 	private Utilisateur currentUser;
-	private static final int PORT = 8952;
-	Socket socket;
-	PrintWriter output;
-	Client c = new Client();
-	
 	public ModeleUtilisateur(String user, String password) {
-		currentUser = new Utilisateur(1, "FABRE", "Maxime"); //Ligne pour test
 		if (user.equals("") || password.equals("")) {
 			System.out.println("CHAMP VIDE");
 		} else {
+			Client c = new Client();
 			c.sendMessage("CONNECT "+user+ " "+ password);
-			String userString;
-			do {
-				userString = c.getResponse();
-				userString = c.getResponse();
-			} while (userString == null);
-			System.out.println(userString);
+			List<String> userStringLines;
+			userStringLines = c.getResponse();
+			
+			if(!userStringLines.get(1).equals("NOT OK")) {
+				String [] str = userStringLines.get(1).split("\\s+");
+				currentUser = new Utilisateur(Integer.parseInt(str[0]), str[2], str[1]);
+			}
 		}
-				
+		
 	}
 
 	public void setCurrentUser(Utilisateur currentUser) {
@@ -48,76 +48,105 @@ public class ModeleUtilisateur implements Serializable {
 		if (user.equals("") || password.equals("")) {
 			System.out.println("CHAMP VIDE");
 		} else {
+			Client c = new Client();
 			c.sendMessage("CONNECT "+user+ " "+ password);
-			String userString;
-			do {
-				userString = c.getResponse();
-				String tuserString = c.getResponse();
-				System.out.println("s");
-			} while (userString == null);
-			System.out.println("s" +userString);
+			List<String> userStringLines;
+			userStringLines = c.getResponse();
+			
+			if(!userStringLines.get(1).equals("NOT OK")) {
+				String [] str = userStringLines.get(1).split("\\s+");
+				currentUser = new Utilisateur(Integer.parseInt(str[0]), str[2], str[1]);
+			}
 		}		
 	}
 
 	public List<Groupe> getListeGroupe() {
-		//Pour Tester
-		Utilisateur u1 = new Utilisateur(1, "FABRE", "Maxime");
-		Utilisateur u2 = new Utilisateur(2, "LOUAHADJ", "Inès");
-		Utilisateur u3 = new Utilisateur(3, "SALVAGNAC", "Maxime");
+		Client c = new Client();
+		c.sendMessage("GET groups");
+		List<String> groupsStringLines;
+		groupsStringLines = c.getResponse();
+		System.out.println(groupsStringLines.toString());
 		
-		List<Utilisateur> tda3 = new ArrayList<Utilisateur>();
-		List<Utilisateur> tda4 = new ArrayList<Utilisateur>();
+		List<Groupe> listeGroupe = new ArrayList<Groupe>();
+		for (int i = 1; i < groupsStringLines.size()-1; i++) {
+			String [] str = groupsStringLines.get(i).split("\\s+");
+			
+			c.sendMessage("GET members "+str[0]);
+			List<String> userStringLines;
+			userStringLines = c.getResponse();
+			System.out.println(userStringLines.toString());
+			
+			List<Utilisateur> listeUtilisateur = new ArrayList<Utilisateur>();
+			for (int j = 1; j < userStringLines.size()-1; j++) {
+				String [] stru = userStringLines.get(j).split("\\s+");
+				
+				listeUtilisateur.add(new Utilisateur(Integer.parseInt(stru[0]), stru[1], stru[2]));
+			}
+			listeGroupe.add(new Groupe(Integer.parseInt(str[0]), str[1], listeUtilisateur));
+		}
 		
-		tda3.add(u1);
-		tda3.add(u2);
-		tda4.add(u3);
-		
-		List<Groupe> listeTest = new ArrayList<Groupe>();
-		listeTest.add(new Groupe(1, "TDA3", tda3));
-		listeTest.add(new Groupe(2, "TDA4", tda4));
-		return listeTest;
+		return listeGroupe;
 	}
-	//test
-	private int i = 1;
 	public void envoyerFil(Fil f) {
-		f.setIdFil(i);
-		i ++;
+		Client c = new Client();
+		c.sendMessage("NEW fil "+f.getTitre().replace(" ", "£")+" "+f.getCreateur().getId()+" "+f.getDestination().getIdGroupe());
+		List<String> groupsStringLines;
+		groupsStringLines = c.getResponse();
+		System.out.println(groupsStringLines.toString());
+		
+		f.setIdFil(Integer.parseInt(groupsStringLines.get(1)));
+
 	}
 	//test
 	private int j = 1;
 	public void envoyerMessage(Message m, Fil f) {
-		m.setIdMessage(j);
-		j++;
+		Client c = new Client();
+		c.sendMessage("NEW message "+m.getTexte().replace(" ", "£")+" "+m.getExpediteur().getId()+" "+f.getIdFil()+" "+ m.getdCreation().getTime());
+		List<String> groupsStringLines;
+		groupsStringLines = c.getResponse();
+		System.out.println(groupsStringLines.toString());
+		
+		m.setIdMessage(Integer.parseInt(groupsStringLines.get(1)));
 		
 	}
 	
 	
-	public class Client implements Serializable{
+	public class Client {
+		private static final long serialVersionUID = 1L;
 		private static final int PORT = 8952;
-		Socket socket;
-		PrintWriter output;
+		private Socket socket;
+		private PrintWriter output;
 		
 		public Client() {
 			try {
 				socket = new Socket(InetAddress.getLocalHost(), PORT);
 				output = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 			} catch (IOException e) {
-				e.printStackTrace();	 
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+			
 		}
 		
 		public void sendMessage(String msg){
 			System.out.println("Message sent to server " + msg);
 			output.println(msg);
+			
 		}
 		
-		public String getResponse() {
-			try(BufferedReader plec = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-				String input = plec.readLine();
+		public List<String> getResponse() {
+			try {
+				BufferedReader plec = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				String input;
+				List<String> ret = new ArrayList();
+				do {
+					 input = plec.readLine();
+					 ret.add(input);
+				} while (!input.equals("END"));
 				//output.println("OUI" + input);
-				return input;
+				return ret;
 			} catch (IOException e) {
-				e.printStackTrace();
+				e.printStackTrace();	 
 			}
 			return null;
 		}

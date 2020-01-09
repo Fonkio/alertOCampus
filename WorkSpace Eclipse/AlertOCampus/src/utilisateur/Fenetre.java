@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JFrame;
 
@@ -25,7 +27,7 @@ public class Fenetre extends JFrame implements WindowListener{
  		try {
  			in = new ObjectInputStream(new FileInputStream("data.txt"));
  		} catch (IOException e) {
- 			e.printStackTrace();
+ 			System.out.println("INITIALISATION FIRST START");
  			fileExist = false;
  		}
  		// lire l’objet dans le flux d’entrée et le transtyper dans son type
@@ -47,12 +49,24 @@ public class Fenetre extends JFrame implements WindowListener{
  		if(!find) {
 	 		this.vueUtilisateur = new VueUtilisateur();
 	 	}
-	    
+ 		
 	    this.add(this.vueUtilisateur);
 	    this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	    this.addWindowListener(this);
 	    this.setSize(1500,990);
 	    this.setVisible(true);
+	    Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			  @Override
+			  public void run() {
+			    System.out.println("RECUP MESSAGE ...");
+			    if(vueUtilisateur.controleur.getModeleUtilisateur().getCurrentUser() != null) {
+			    	System.out.println("RECUP TERMINEE");
+			    }else {
+			    	System.out.println("RECUP TERMINEE : UTILISATEUR NON CONNECTE");
+			    }
+			  }
+			}, 5*1000, 5*1000);
 	}
 
 
@@ -87,7 +101,7 @@ public class Fenetre extends JFrame implements WindowListener{
 			ex.printStackTrace();
 		}
 		System.out.println("APPLI SAVE");
-		
+		System.exit(0);
 	}
 
 

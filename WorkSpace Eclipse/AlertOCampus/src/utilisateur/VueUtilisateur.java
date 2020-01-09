@@ -4,6 +4,7 @@ package utilisateur;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.Serializable;
+import java.nio.file.CopyOption;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.NavigableSet;
@@ -29,7 +30,6 @@ import javax.swing.tree.DefaultTreeModel;
 
 public class VueUtilisateur extends JPanel implements Serializable {
 	private static final long serialVersionUID = 1L;
-	Client client;
 	ControleurUtilisateur controleur;
 	private JLabel titreFil = new JLabel("Titre");
 	private JLabel dateFil = new JLabel("Date");
@@ -41,13 +41,7 @@ public class VueUtilisateur extends JPanel implements Serializable {
 	private DefaultMutableTreeNode racine = new DefaultMutableTreeNode("Groupes");
 	private JTree arbreTickets = new JTree(racine) ;
 	private NavigableSet<Groupe> listeGroupes = new TreeSet<Groupe>();
-	private NavigableSet<Fil> listeFils = new TreeSet<Fil>(new Comparator<Fil>() {
-
-		@Override
-		public int compare(Fil o1, Fil o2) {
-			return o2.getMessages().first().getdCreation().compareTo(o1.getMessages().first().getdCreation());
-		}
-	});
+	private NavigableSet<Fil> listeFils = new TreeSet<Fil>(new CompFils());
 	private Fil selectedFil;
 
 	public VueUtilisateur() {
@@ -282,8 +276,9 @@ public class VueUtilisateur extends JPanel implements Serializable {
 	
 	public void nouveauMessage(Message m) {
 		System.out.println("[TERMINE ] Ajout nouveau message");
-		//ENVOI MESSAGE SERVEUR
-		modeleTableau.messages.add(m);
+		//envoi serv
+		controleur.envoyerMessage(m, selectedFil);
+		//modeleTableau.messages.add(m);
 		//AJOUT MESSAGE FIL
 		selectedFil.getMessages().add(m);
 		//ON RECHARGE LE FIL
@@ -316,7 +311,13 @@ public class VueUtilisateur extends JPanel implements Serializable {
 		return s;
 	}
 	
-	
+	public class CompFils implements Comparator<Fil>, Serializable {
+
+		@Override
+		public int compare(Fil o1, Fil o2) {
+			return o2.getMessages().first().getdCreation().compareTo(o1.getMessages().first().getdCreation());
+		}
+	}
 
 	
 	

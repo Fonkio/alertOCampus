@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Message implements Comparable<Message>, Serializable{
+	private static final long serialVersionUID = 1L;
 	private int idMessage;
 	private String texte;
 	private Date dCreation;

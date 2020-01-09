@@ -2,6 +2,7 @@ package utilisateur;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
@@ -14,8 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.table.AbstractTableModel;
 
-public class ModeleTableau extends AbstractTableModel {
-	
+public class ModeleTableau extends AbstractTableModel implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	Set<Message> messages = new TreeSet<>();
 	
 	@Override

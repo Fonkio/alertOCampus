@@ -30,8 +30,10 @@ CREATE TABLE Message(
    Texte TEXT,
    dCreation DATETIME,
    Id_Fil_de_discussion INT NOT NULL,
+   Id_Utilisateur INT NOT NULL,
    PRIMARY KEY(Id_Message),
    FOREIGN KEY(Id_Fil_de_discussion) REFERENCES Fil_de_discussion(Id_Fil_de_discussion)
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id_Utilisateur)
 );
 
 CREATE TABLE Appartenir(
@@ -42,7 +44,7 @@ CREATE TABLE Appartenir(
    FOREIGN KEY(Id_Groupe) REFERENCES Groupe(Id_Groupe) ON DELETE CASCADE
 );
 
-CREATE TABLE Envoyer(
+CREATE TABLE Status(
    Id_Utilisateur INT,
    Id_Message INT,
    Status VARCHAR(10),

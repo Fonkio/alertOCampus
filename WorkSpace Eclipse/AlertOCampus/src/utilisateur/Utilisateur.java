@@ -4,6 +4,7 @@ package utilisateur;
 import java.io.Serializable;
 
 public class Utilisateur implements Comparable<Utilisateur>, Serializable {
+	private static final long serialVersionUID = 1L;
 	private int id;
 	private String prenom;
 	private String nom;
@@ -50,7 +51,7 @@ public class Utilisateur implements Comparable<Utilisateur>, Serializable {
 
 	@Override
 	public String toString() {
-		return "Utilisateur [id=" + id + ", prenom=" + prenom + ", nom=" + nom + "]";
+		return prenom + " " + nom;
 	}
 
 	@Override
