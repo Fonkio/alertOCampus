@@ -1,3 +1,17 @@
+
+***** GIT
+Le projet a été développé sur GIT :
+https://gitlab.com/Fonkio/projet-s5
+
+
+***** Lancement de l'application
+
+Lancer le serveur en premier "AlertOCampusAdminServeur.jar"
+Lancer le client "AlertOCampus.jar"
+Se connecter avec un des utilisateurs
+Pour simuler plusieurs clients il faut séparer le AlertOCampus.jar du fichier data.txt généré à la fermeture car l'utilisateur est enregistré.
+
+
 **** Requêtes de création de base de données et des tables, à éxécuter sans sélectionner de bases de données :
 
 CREATE DATABASE alertocampus;
@@ -81,9 +95,3 @@ INSERT INTO appartenir VALUES (3, 1);
 
 INSERT INTO appartenir VALUES (4, 1);
 
-***** Lancement de l'application
-
-Lancer le serveur en premier "AlertOCampusAdminServeur.jar"
-Lancer le client "AlertOCampus.jar"
-Se connecter avec un des utilisateurs
-Pour simuler plusieurs clients il faut séparer le AlertOCampus.jar du fichier data.txt généré à la fermeture car l'utilisateur est enregistré.
