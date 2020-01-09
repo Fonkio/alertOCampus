@@ -94,10 +94,10 @@ public class ServeurModele {
 			}	
 	}
 	
-	public void updateGroup(String libelle) {
+	public void updateGroup(Groupe group) {
 		try (Connection con = this.connectToDatabase();
 				PreparedStatement stmt =  con.prepareStatement("UPDATE groupe SET libelle = ?")){
-				stmt.setString(1, libelle);
+				stmt.setString(1, group.getLibelle());
 				stmt.executeUpdate();
 			} catch (SQLException e) {
 				e.printStackTrace();

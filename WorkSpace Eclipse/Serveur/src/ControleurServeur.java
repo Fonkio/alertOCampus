@@ -3,6 +3,7 @@ import java.awt.event.ActionListener;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JButton;
 import javax.swing.JList;
@@ -20,6 +21,7 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 	private ServeurModele serveur;
 	private PaneState panestate;
 	private final Utilisateur defaultUser = new Utilisateur(0, "utilisateur", "Nouvel");
+	private final Groupe defaultGroup = new Groupe(0, "Nouveau groupe", new TreeSet<>());
 	
 	
 	public PaneState getPanestate() {
@@ -64,7 +66,7 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 			break;
 				
 		case "Nouveau groupe":
-			
+			addGroup();
 			break;
 		case "Nouvel utilisateur":
 			addUser();
@@ -79,20 +81,62 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 	}
 
 	private void addUser() {
-
 		this.vue.listeUsers.addElement(this.defaultUser);
 		int lastElementIndex = this.vue.listeUsers.getSize() - 1;
 		this.vue.listeGaucheUsers.setSelectedIndex(lastElementIndex);
 		this.vue.resetFormUser();
 		this.vue.addBtn[1].setEnabled(false);
+		this.vue.ajoutGroupeCB.setEnabled(false);
+		this.vue.deleteUserFromGroupBtn[1].setEnabled(false);
+		this.vue.ajoutUtilisateurGroupeOKBtn.setEnabled(false);
+	}
+	
+	private void addGroup() {
+		this.vue.listeGroupes.addElement(this.defaultGroup);
+		int lastElementIndex = this.vue.listeGroupes.getSize() - 1;
+		this.vue.listeGaucheGroups.setSelectedIndex(lastElementIndex);
+		this.vue.resetFormGroup();
+		this.vue.addBtn[0].setEnabled(false);
+		this.vue.deleteUserFromGroupBtn[0].setEnabled(false);
 	}
 	
 	
 	private void sauvegarder() {
 		switch(panestate) {
 		case GROUPES :
-			
+			if (this.vue.listeGaucheGroups.getSelectedValue().equals(this.defaultGroup)) {
+				
+				if (this.vue.areGroupTFEmpty()) {
+					int input = JOptionPane.showConfirmDialog(this.vue, "Vous n'avez entré aucune information, voulez-vous continuer ?", "Erreur", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+					if(input == 0) {
+						this.vue.listeGroupes.removeElement(this.defaultGroup);
+						this.vue.disableSelectionBtn();
+						this.vue.resetFormGroup();
+						this.vue.addBtn[0].setEnabled(true);
+						
+					}
+				
+				} else {
+					Groupe group = this.serveur.addGroup(this.vue.nomGroupeTF.getText());
+					this.vue.listeGroupes.removeElement(this.defaultGroup);
+					this.vue.listeGroupes.addElement(group);
+					this.vue.disableSelectionBtn();
+					this.vue.addBtn[0].setEnabled(true);
+		
+				}
+				
+			} else {
+				Groupe selectedGroup = this.vue.listeGaucheGroups.getSelectedValue();
+				String newLibelle = this.vue.nomGroupeTF.getText();
+					if (!(newLibelle.equals(selectedGroup.getLibelle()) )) {
+						selectedGroup.setLibelle(newLibelle);
+						this.serveur.updateGroup(selectedGroup);
+						this.vue.listeGaucheGroups.repaint();
+					}
+			}
 			break;
+			
+			
 		case UTILISATEURS :
 			if (this.vue.listeGaucheUsers.getSelectedValue().equals(this.defaultUser)) {
 				
@@ -107,7 +151,6 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 					}
 				
 				} else {
-					System.out.println(this.vue.nomGroupeTF.getText());
 					Utilisateur user = this.serveur.addUser(this.vue.nomUserTF.getText(), this.vue.prenomUserTF.getText());
 					this.vue.listeUsers.removeElement(this.defaultUser);
 					this.vue.listeUsers.addElement(user);
@@ -163,19 +206,28 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 		switch(panestate) {
 			case UTILISATEURS :
 				Utilisateur selectedUser = (Utilisateur) vue.getSelectedMainElement();
-				this.serveur.deleteUser(selectedUser);
-				this.vue.listeUsers.removeElement(selectedUser);
-				this.vue.resetFormUser();
+				if (selectedUser != null) {
+					this.serveur.deleteUser(selectedUser);
+					this.vue.listeUsers.removeElement(selectedUser);
+					this.vue.resetFormUser();
+					this.vue.disableSelectionBtn();
+					this.vue.addBtn[1].setEnabled(true);
+				}
 				break;
 			case GROUPES :
 				Groupe selectedGroup = (Groupe) vue.getSelectedMainElement();
-				this.serveur.deleteGroup(selectedGroup);
-				this.vue.listeGroupes.removeElement(selectedGroup);
-				this.vue.ajoutGroupeCB.removeItem(selectedGroup);
-				this.vue.resetFormGroup();
+				if (selectedGroup != null) {
+					this.serveur.deleteGroup(selectedGroup);
+					this.vue.listeGroupes.removeElement(selectedGroup);
+					this.vue.ajoutGroupeCB.removeItem(selectedGroup);
+					this.vue.resetFormGroup();
+					this.vue.disableSelectionBtn();
+					this.vue.addBtn[0].setEnabled(true);
+				}
 				break;
 		}
-		this.vue.disableSelectionBtn();
+
+		
 	}
 
 	@Override
@@ -183,23 +235,30 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 		if (! e.getValueIsAdjusting() ) {		
 			switch (panestate) {
 			case UTILISATEURS :
+				
 				JList<Utilisateur> users = (JList<Utilisateur>) e.getSource();
 				Utilisateur currentUser = users.getSelectedValue();
 				if (currentUser != null) {
+					if (! currentUser.equals(this.defaultUser)) {
+						this.vue.listeUsers.removeElement(this.defaultUser);
+					}
 					vue.setNomUserTF(currentUser.getNom());
 					vue.setPrenomUserTF(currentUser.getPrenom());
 					Set<Groupe> groupsOfUser = this.serveur.getGroupsOfUser(currentUser.getId());
-					System.out.println(groupsOfUser);
 					vue.resetGroupOfMemberList();
 					for(Groupe group : groupsOfUser) {
 						vue.addGroupOfMember(group);
 					}
 				}	
+				this.vue.addBtn[1].setEnabled(true);
 				break;
 			case GROUPES :
 				JList<Groupe> groups = (JList<Groupe>) e.getSource();
 				Groupe currentGroup = groups.getSelectedValue();
 				if (currentGroup != null) {
+					if (! currentGroup.equals(this.defaultGroup)) {
+						this.vue.listeGroupes.removeElement(this.defaultGroup);
+					}
 					vue.setNomGroupeTF(currentGroup.getLibelle());
 					Set<Utilisateur> members = this.serveur.getGroupMembers(currentGroup.getId());
 					vue.resetMemberOfGroupList();
@@ -207,9 +266,11 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 						vue.addMemberOfGroup(user);
 					}
 				}
+				this.vue.addBtn[0].setEnabled(true);
 			
 			}
 		this.vue.enableSelectionBtn();
+		
 			
 		}
 	}

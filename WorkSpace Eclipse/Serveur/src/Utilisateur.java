@@ -3,11 +3,37 @@ public class Utilisateur implements Comparable<Utilisateur> {
 	private int id;
 	private String prenom;
 	private String nom;
+	private String login;
+	private String mdp;
+	
+	public Utilisateur(int id, String prenom, String nom, String login, String mdp) {
+		this.id = id;
+		this.prenom = prenom;
+		this.nom = nom;
+		this.login = login;
+		this.mdp = mdp;
+	}
 	
 	public Utilisateur(int id, String prenom, String nom) {
 		this.id = id;
 		this.prenom = prenom;
 		this.nom = nom;
+	}
+
+	public String getLogin() {
+		return login;
+	}
+
+	public void setLogin(String login) {
+		this.login = login;
+	}
+
+	public String getMdp() {
+		return mdp;
+	}
+
+	public void setMdp(String mdp) {
+		this.mdp = mdp;
 	}
 
 	public String getPrenom() {

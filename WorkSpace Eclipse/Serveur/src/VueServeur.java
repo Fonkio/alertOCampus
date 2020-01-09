@@ -51,9 +51,11 @@ public class VueServeur extends JTabbedPane implements Serializable{
 	protected JTextField prenomUserTF;
 	protected JButton[] addBtn = new JButton[NB_TABS];
 	private JButton[] deleteBtn = new JButton[NB_TABS];
-	private JButton[] deleteUserFromGroupBtn = new JButton[NB_TABS];
-	private JButton[] saveBtn = new JButton[NB_TABS];
-	private JButton ajoutUtilisateurGroupeOKBtn;
+	protected JButton[] deleteUserFromGroupBtn = new JButton[NB_TABS];
+	protected JButton[] saveBtn = new JButton[NB_TABS];
+	protected JButton ajoutUtilisateurGroupeOKBtn;
+	private JTextField loginTF;
+	private JTextField mdpTF;
 	
 	public VueServeur () {
 		this.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -65,7 +67,7 @@ public class VueServeur extends JTabbedPane implements Serializable{
 		this.constructUserPane();
 		this.controleur = new ControleurServeur(this);
 		this.addListeners();
-		
+		this.disableSelectionBtn();
 	}
 	
 	public void disableFormUserBtn() {
@@ -145,13 +147,17 @@ public class VueServeur extends JTabbedPane implements Serializable{
 		switch(this.controleur.getPanestate()) {
 			case GROUPES :
 				this.saveBtn[0].setEnabled(false);
-				this.listeGaucheGroups.clearSelection();
+				if (! this.listeGroupes.isEmpty()) { this.listeGaucheGroups.clearSelection();}
+				this.nomGroupeTF.setText("");
+				this.nomGroupeTF.setEditable(false);
+				this.deleteUserFromGroupBtn[0].setEnabled(false);
 				break;
 			case UTILISATEURS :
 				this.saveBtn[1].setEnabled(false);
 				this.ajoutGroupeCB.setEnabled(false);
 				this.ajoutUtilisateurGroupeOKBtn.setEnabled(false);
-				this.listeGaucheUsers.clearSelection();
+				//if (! this.listeUsers.isEmpty())
+				{ this.listeGaucheUsers.clearSelection();}
 				this.nomUserTF.setText("");
 				this.nomUserTF.setEditable(false);
 				this.prenomUserTF.setText("");
@@ -164,6 +170,8 @@ public class VueServeur extends JTabbedPane implements Serializable{
 		switch(this.controleur.getPanestate()) {
 			case GROUPES :
 				this.saveBtn[0].setEnabled(true);
+				this.nomGroupeTF.setEditable(true);
+				this.deleteUserFromGroupBtn[0].setEnabled(true);
 				break;
 			case UTILISATEURS :
 				this.saveBtn[1].setEnabled(true);
@@ -177,6 +185,10 @@ public class VueServeur extends JTabbedPane implements Serializable{
 	
 	public boolean areUserTFEmpty() {
 		return this.nomUserTF.getText().isEmpty() || this.prenomUserTF.getText().isEmpty();
+	}
+	
+	public boolean areGroupTFEmpty() {
+		return this.nomGroupeTF.getText().isEmpty();
 	}
 	
 	private void addListeners() {
@@ -268,6 +280,16 @@ public class VueServeur extends JTabbedPane implements Serializable{
 		JLabel prenomLabel = new JLabel("Prénom");
 		this.prenomUserTF = new JTextField();
 		this.prenomUserTF.setMaximumSize(new Dimension(Integer.MAX_VALUE, this.prenomUserTF.getPreferredSize().height));
+		
+		// Champ de saisie du login
+		JLabel loginLabel = new JLabel("Login");
+		this.loginTF = new JTextField();
+		this.loginTF.setMaximumSize(new Dimension(Integer.MAX_VALUE, this.loginTF.getPreferredSize().height));
+		
+		//Champ de saisie du mdp
+		JLabel mdpLabel = new JLabel("Mot de passe");
+		this.mdpTF = new JTextField();
+		this.mdpTF.setMaximumSize(new Dimension(Integer.MAX_VALUE, this.mdpTF.getPreferredSize().height));
 		
 		// Sélection de groupes
 		JLabel ajoutLabel = new JLabel("Ajouter l'utilisateur à un groupe");
