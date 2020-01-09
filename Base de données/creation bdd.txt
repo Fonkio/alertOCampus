@@ -1,4 +1,6 @@
+CREATE DATABASE alertocampus;
 
+USE alertocampus;
 
 CREATE TABLE Utilisateur(
    Id_Utilisateur INT AUTO_INCREMENT,
@@ -32,7 +34,7 @@ CREATE TABLE Message(
    Id_Fil_de_discussion INT NOT NULL,
    Id_Utilisateur INT NOT NULL,
    PRIMARY KEY(Id_Message),
-   FOREIGN KEY(Id_Fil_de_discussion) REFERENCES Fil_de_discussion(Id_Fil_de_discussion)
+   FOREIGN KEY(Id_Fil_de_discussion) REFERENCES Fil_de_discussion(Id_Fil_de_discussion),
    FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id_Utilisateur)
 );
 
@@ -52,10 +54,9 @@ CREATE TABLE Status(
    FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id_Utilisateur),
    FOREIGN KEY(Id_Message) REFERENCES Message(Id_Message)
 );
-<<<<<<< HEAD
 
-Set de données de base :
-=======
+
+
 CREATE TABLE status_fil(
    Id_Utilisateur INT,
    Id_Fil_de_discussion INT,
@@ -64,8 +65,7 @@ CREATE TABLE status_fil(
    FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id_Utilisateur),
    FOREIGN KEY(Id_Fil_de_discussion) REFERENCES fil_de_discussion(Id_Fil_de_discussion)
 );
-INSERT INTO utilisateur(motDePasse, Nom, Prenom)  VALUES ('pinpix', 'Doe', 'John');
->>>>>>> b1d426a233474779bc8b055911a8a7439515198b
+
 
 INSERT INTO utilisateur(login, motDePasse, Nom, Prenom)  VALUES ('djn', 'pinpix', 'Doe', 'John');
 
@@ -75,7 +75,7 @@ INSERT INTO utilisateur(login, motDePasse, Nom, Prenom) VALUES ('lhn', '$iutinfo
 
 INSERT INTO utilisateur(login, motDePasse, Nom, Prenom)  VALUES ('fbm', '$iutinfo', 'Fabre', 'Maxime');
 
-INSERT INTO utilisateur (login, motDePasse, Nom, Prenom) VALUES ('slm', 'slm', 'pinpix', 'SALVAGNAC', 'Maxime');
+INSERT INTO utilisateur (login, motDePasse, Nom, Prenom) VALUES ('slm', 'pinpix', 'SALVAGNAC', 'Maxime');
 
 INSERT INTO groupe(Libelle) VALUES ('TDA3');
 
