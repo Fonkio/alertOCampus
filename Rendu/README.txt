@@ -81,3 +81,9 @@ INSERT INTO appartenir VALUES (3, 1);
 
 INSERT INTO appartenir VALUES (4, 1);
 
+***** Lancement de l'application
+
+Lancer le serveur en premier "AlertOCampusAdminServeur.jar"
+Lancer le client "AlertOCampus.jar"
+Se connecter avec un des utilisateurs
+Pour simuler plusieurs clients il faut séparer le AlertOCampus.jar du fichier data.txt généré à la fermeture car l'utilisateur est enregistré.

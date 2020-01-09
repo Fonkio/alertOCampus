@@ -1,4 +1,3 @@
-package utilisateur;
 
 
 import java.awt.BorderLayout;
