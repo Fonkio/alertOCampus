@@ -61,6 +61,8 @@ public class Fenetre extends JFrame implements WindowListener{
 			  public void run() {
 			    System.out.println("RECUP MESSAGE ...");
 			    if(vueUtilisateur.controleur.getModeleUtilisateur().getCurrentUser() != null) {
+			    	vueUtilisateur.controleur.nouveauFilMessage();
+			    	vueUtilisateur.statusUpdate();
 			    	System.out.println("RECUP TERMINEE");
 			    }else {
 			    	System.out.println("RECUP TERMINEE : UTILISATEUR NON CONNECTE");

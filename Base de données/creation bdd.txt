@@ -28,7 +28,7 @@ CREATE TABLE Fil_de_discussion(
 CREATE TABLE Message(
    Id_Message INT AUTO_INCREMENT,
    Texte TEXT,
-   dCreation DATETIME,
+   dCreation BIGINT,
    Id_Fil_de_discussion INT NOT NULL,
    Id_Utilisateur INT NOT NULL,
    PRIMARY KEY(Id_Message),
@@ -52,7 +52,14 @@ CREATE TABLE Status(
    FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id_Utilisateur),
    FOREIGN KEY(Id_Message) REFERENCES Message(Id_Message)
 );
-
+CREATE TABLE status_fil(
+   Id_Utilisateur INT,
+   Id_Fil_de_discussion INT,
+   Status VARCHAR(10),
+   PRIMARY KEY(Id_Utilisateur, Id_Fil_de_discussion),
+   FOREIGN KEY(Id_Utilisateur) REFERENCES Utilisateur(Id_Utilisateur),
+   FOREIGN KEY(Id_Fil_de_discussion) REFERENCES fil_de_discussion(Id_Fil_de_discussion)
+);
 INSERT INTO utilisateur(motDePasse, Nom, Prenom)  VALUES ('pinpix', 'Doe', 'John');
 
 INSERT INTO utilisateur(motDePasse, Nom, Prenom)  VALUES ('pinpin', 'Costa', 'Marie');

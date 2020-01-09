@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
@@ -27,7 +28,7 @@ public class ControleurUtilisateur implements Serializable, ActionListener, Tree
 			System.exit(0);
 		}
 		
-		modeleUtilisateur = new ModeleUtilisateur(userPwd[0], userPwd[1]);
+		modeleUtilisateur = new ModeleUtilisateur(userPwd[0], userPwd[1], this);
 		
 		while (modeleUtilisateur.getCurrentUser() == null) {
 			vu.erreurAuth();
@@ -83,6 +84,17 @@ public class ControleurUtilisateur implements Serializable, ActionListener, Tree
 		modeleUtilisateur.envoyerMessage(m, f);
 		
 	}
+	public void nouveauFilMessage() {
+		modeleUtilisateur.nouveauFilMessage();
+		
+	}
+	public void nouveauFil() {
+		
+	}
+	public Set<Fil> getFil() {
+		return vueUtilisateur.getListeFils();
+	}
+	
 
 	@Override
 	public void valueChanged(TreeSelectionEvent e) { //EVENT ARBRE CHANGE SELECTION
@@ -95,6 +107,7 @@ public class ControleurUtilisateur implements Serializable, ActionListener, Tree
 			if (noeud.getUserObject() instanceof Fil) {
 				Fil f = (Fil)noeud.getUserObject();
 				vueUtilisateur.chargerFil(f);
+				modeleUtilisateur.lireFil(f);
 			}
 				
 			
