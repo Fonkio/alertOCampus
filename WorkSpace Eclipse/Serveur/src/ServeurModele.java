@@ -28,12 +28,14 @@ public class ServeurModele {
 
 			Connection con = this.connectToDatabase();
 			Statement stmt =  con.createStatement();
-			ResultSet rst = stmt.executeQuery("SELECT Id_Utilisateur, Nom, Prenom FROM utilisateur");
+			ResultSet rst = stmt.executeQuery("SELECT Id_Utilisateur, Nom, Prenom , Login , motDePasse FROM utilisateur");
 			while(rst.next()) {
 				String nom = rst.getString("Nom");
 				String prenom = rst.getString("Prenom");
+				String login = rst.getString("Login");
+				String motDePasse = rst.getString("motDePasse");
 				int id = rst.getInt("Id_Utilisateur");
-				Utilisateur currentuser = new Utilisateur(id, prenom, nom);
+				Utilisateur currentuser = new Utilisateur(id, prenom, nom, login, motDePasse);
 				users.add(currentuser);
 			}	
 		} catch (SQLException e) {
@@ -46,7 +48,7 @@ public class ServeurModele {
 		Utilisateur user = null;
 		try {
 			Connection con = this.connectToDatabase();
-			PreparedStatement stmt =  con.prepareStatement("SELECT Id_Utilisateur, Prenom, Nom FROM Utilisateur"
+			PreparedStatement stmt =  con.prepareStatement("SELECT Id_Utilisateur, Prenom, Nom, Login, MotDePasse FROM Utilisateur"
 					+ " WHERE Id_Utilisateur = ?");
 			stmt.setInt(1, id);
 			ResultSet rst = stmt.executeQuery();
@@ -54,7 +56,9 @@ public class ServeurModele {
 				int idUser = rst.getInt("Id_Utilisateur");
 				String nom = rst.getString("Nom");
 				String prenom = rst.getString("Prenom");
-				user = new Utilisateur(idUser, prenom, nom);
+				String login = rst.getString("Login");
+				String mdp = rst.getString("motDePasse");
+				user = new Utilisateur(idUser, prenom, nom, login, mdp);
 			}	
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -84,10 +88,12 @@ public class ServeurModele {
 	
 	public void updateUser(Utilisateur user) {
 		try (Connection con = this.connectToDatabase();
-				PreparedStatement stmt =  con.prepareStatement("UPDATE utilisateur SET Nom = ? , Prenom = ? WHERE Id_Utilisateur = ?")){
+				PreparedStatement stmt =  con.prepareStatement("UPDATE utilisateur SET Nom = ? , Prenom = ? , login = ? , mdp = ? WHERE Id_Utilisateur = ?")){
 				stmt.setString(1, user.getNom());
 				stmt.setString(2, user.getPrenom());
-				stmt.setInt(3, user.getId());
+				stmt.setString(3, user.getLogin());
+				stmt.setString(4, user.getMdp());
+				stmt.setInt(5, user.getId());
 				stmt.executeUpdate();
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -211,6 +217,24 @@ public class ServeurModele {
 		return user;
 	}
 	
+	public Utilisateur addUser(String nom, String prenom, String login, String mdp) {
+		Utilisateur user = null;
+		try (Connection con = this.connectToDatabase();
+			PreparedStatement stmt =  con.prepareStatement("INSERT INTO utilisateur(Nom, Prenom, Login, motDePasse)  VALUES (? , ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);){
+			stmt.setString(1, nom);
+			stmt.setString(2, prenom);
+			stmt.setString(3, login);
+			stmt.setString(4, mdp);
+			stmt.executeUpdate();
+			try(ResultSet rs = stmt.getGeneratedKeys()) {
+				rs.last();
+				user = new Utilisateur(rs.getInt(1), nom, prenom, login, mdp);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+		return user;
+	}
 	public void deleteGroup(Groupe group) {
 		try {
 			Connection con = this.connectToDatabase();

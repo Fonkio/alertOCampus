@@ -54,8 +54,8 @@ public class VueServeur extends JTabbedPane implements Serializable{
 	protected JButton[] deleteUserFromGroupBtn = new JButton[NB_TABS];
 	protected JButton[] saveBtn = new JButton[NB_TABS];
 	protected JButton ajoutUtilisateurGroupeOKBtn;
-	private JTextField loginTF;
-	private JTextField mdpTF;
+	protected JTextField loginTF;
+	protected JTextField mdpTF;
 	
 	public VueServeur () {
 		this.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -135,6 +135,8 @@ public class VueServeur extends JTabbedPane implements Serializable{
 	public void resetFormUser() {
 		this.nomUserTF.setText(null);
 		this.prenomUserTF.setText(null);
+		this.loginTF.setText(null);
+		this.mdpTF.setText(null);
 		this.listeGroupesDeMembre.clear();
 	}
 	
@@ -162,6 +164,10 @@ public class VueServeur extends JTabbedPane implements Serializable{
 				this.nomUserTF.setEditable(false);
 				this.prenomUserTF.setText("");
 				this.prenomUserTF.setEditable(false);
+				this.loginTF.setText("");
+				this.loginTF.setEditable(false);
+				this.mdpTF.setText("");
+				this.mdpTF.setEditable(false);
 				this.deleteUserFromGroupBtn[1].setEnabled(false);
 		}
 	}
@@ -179,6 +185,8 @@ public class VueServeur extends JTabbedPane implements Serializable{
 				this.ajoutUtilisateurGroupeOKBtn.setEnabled(true);
 				this.nomUserTF.setEditable(true);
 				this.prenomUserTF.setEditable(true);
+				this.loginTF.setEditable(true);
+				this.mdpTF.setEditable(true);
 				this.deleteUserFromGroupBtn[1].setEnabled(true);
 		}
 	}
@@ -322,15 +330,25 @@ public class VueServeur extends JTabbedPane implements Serializable{
 		vGroup.addGroup(grouplayout.createParallelGroup(Alignment.BASELINE)
 		.addComponent(prenomLabel)
 		.addComponent(this.prenomUserTF));	
+		vGroup.addGroup(grouplayout.createParallelGroup(Alignment.BASELINE)
+				.addComponent(loginLabel)
+				.addComponent(this.loginTF));	
+		vGroup.addGroup(grouplayout.createParallelGroup(Alignment.BASELINE)
+				.addComponent(mdpLabel)
+				.addComponent(this.mdpTF));	
 		grouplayout.setVerticalGroup(vGroup);
 		
 		GroupLayout.SequentialGroup hGroup = grouplayout.createSequentialGroup();
 		hGroup.addGroup(grouplayout.createParallelGroup()
 				.addComponent(nomLabel)
-				.addComponent(prenomLabel));
+				.addComponent(prenomLabel)
+				.addComponent(loginLabel)
+				.addComponent(mdpLabel));
 		hGroup.addGroup(grouplayout.createParallelGroup()
 				.addComponent(this.nomUserTF)
-				.addComponent(this.prenomUserTF));
+				.addComponent(this.prenomUserTF)
+				.addComponent(this.loginTF)
+				.addComponent(this.mdpTF));
 		grouplayout.setHorizontalGroup(hGroup);
 		
 		// Liste des membres du groupe sélectionné

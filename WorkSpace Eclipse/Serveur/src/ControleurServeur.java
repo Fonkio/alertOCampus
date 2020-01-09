@@ -151,7 +151,7 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 					}
 				
 				} else {
-					Utilisateur user = this.serveur.addUser(this.vue.nomUserTF.getText(), this.vue.prenomUserTF.getText());
+					Utilisateur user = this.serveur.addUser(this.vue.nomUserTF.getText(), this.vue.prenomUserTF.getText(), this.vue.loginTF.getText(), this.vue.mdpTF.getText());
 					this.vue.listeUsers.removeElement(this.defaultUser);
 					this.vue.listeUsers.addElement(user);
 					this.vue.disableSelectionBtn();
@@ -163,9 +163,13 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 				Utilisateur selectedUser = this.vue.listeGaucheUsers.getSelectedValue();
 				String newNom = this.vue.nomUserTF.getText();
 				String newPrenom = this.vue.prenomUserTF.getText();
-					if (!(newNom.equals(selectedUser.getNom()) && newPrenom.equals(selectedUser.getPrenom()))) {
+				String newLogin = this.vue.loginTF.getText();
+				String newMdp = this.vue.mdpTF.getText();
+					if (!(newNom.equals(selectedUser.getNom()) && newPrenom.equals(selectedUser.getPrenom()) && newLogin.equals(selectedUser.getLogin()) && newMdp.equals(selectedUser.getMdp()))) {
 						selectedUser.setNom(newNom);
 						selectedUser.setPrenom(newPrenom);
+						selectedUser.setLogin(newLogin);
+						selectedUser.setMdp(newMdp);
 						this.serveur.updateUser(selectedUser);
 						this.vue.listeGaucheUsers.repaint();
 					}
@@ -244,6 +248,8 @@ public  class ControleurServeur implements ActionListener, Serializable, ListSel
 					}
 					vue.setNomUserTF(currentUser.getNom());
 					vue.setPrenomUserTF(currentUser.getPrenom());
+					vue.loginTF.setText(currentUser.getLogin());
+					vue.mdpTF.setText(currentUser.getMdp());
 					Set<Groupe> groupsOfUser = this.serveur.getGroupsOfUser(currentUser.getId());
 					vue.resetGroupOfMemberList();
 					for(Groupe group : groupsOfUser) {
